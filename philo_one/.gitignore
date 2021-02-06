@@ -1,0 +1,5 @@
+philo_one
+tags
+*.swp
+*.o
+.gitignore

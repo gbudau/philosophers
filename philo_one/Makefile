@@ -1,0 +1,41 @@
+NAME = philo_one
+CC = gcc
+CFLAGS = -Wall -Werror -Wextra
+LFLAGS = -lpthread
+RMF = rm -rf
+
+INC_DIR = include
+SRC_DIR = src
+OBJ_DIR = obj
+
+_OBJ = main.o atoi_error.o print_output.o
+OBJ := $(patsubst %, $(OBJ_DIR)/%, $(_OBJ))
+
+_DEPS = philo_one.h
+DEPS := $(patsubst %, $(INC_DIR)/%, $(_DEPS))
+
+.PHONY: all
+all: $(NAME)
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c $(DEPS)
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+$(OBJ): | $(OBJ_DIR)
+
+$(OBJ_DIR):
+	mkdir $(OBJ_DIR)
+
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $@ -I/$(INC_DIR) $(LFLAGS)
+
+
+.PHONY: clean
+clean:
+	$(RMF) $(OBJ_DIR)
+
+.PHONY: fclean
+fclean: clean
+	$(RM) $(NAME)
+
+.PHONY: re
+re: fclean all
