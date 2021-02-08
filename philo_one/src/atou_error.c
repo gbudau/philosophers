@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   atoi_error.c                                       :+:      :+:    :+:   */
+/*   atou_error.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 21:03:23 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/06 19:31:57 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/08 20:43:07 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,40 +19,32 @@ static int	ft_isdigit(int c)
 	return (1);
 }
 
-static int	is_mult_overflow(unsigned int a, unsigned int b, int sign)
+static int	is_mult_overflow(unsigned a, unsigned b)
 {
-	if (sign > 0 && a > ((INT_MAX + 0U) / b))
-		return (TRUE);
-	else if (sign < 0 && a > ((INT_MAX + 1U) / b))
+	if (a > UINT_MAX / b)
 		return (TRUE);
 	return (FALSE);
 }
 
-static int	is_add_overflow(unsigned int a, unsigned int b, int sign)
+static int	is_add_overflow(unsigned a, unsigned b)
 {
-	if (sign > 0 && a > (INT_MAX + 0U - b))
-		return (TRUE);
-	else if (sign < 0 && a > (INT_MAX + 1U - b))
+	if (a > UINT_MAX - b)
 		return (TRUE);
 	return (FALSE);
 }
 
-int			atoi_error(const char *str, int *error)
+unsigned	atou_error(const char *str, int *error)
 {
-	unsigned int	n;
-	int				sign;
+	unsigned	n;
 
-	sign = 1;
-	if (*str == '-' || *str == '+')
-		sign = (*str++ == '-') ? -1 : sign;
 	n = 0;
 	while (ft_isdigit(*str))
 	{
-		*error = is_mult_overflow(n, 10, sign);
+		*error = is_mult_overflow(n, 10);
 		if (*error == TRUE)
 			break ;
 		n = n * 10;
-		*error = is_add_overflow(n, *str - '0', sign);
+		*error = is_add_overflow(n, *str - '0');
 		if (*error == TRUE)
 			break ;
 		n = n + *str - '0';
@@ -60,5 +52,5 @@ int			atoi_error(const char *str, int *error)
 	}
 	if (*str != '\0')
 		*error = TRUE;
-	return ((int)n * sign);
+	return (n);
 }
