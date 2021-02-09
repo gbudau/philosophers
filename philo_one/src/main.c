@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/08 23:10:00 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/09 19:28:07 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct	s_args
 	unsigned		time_to_eat;
 	unsigned		time_to_sleep;
 	unsigned		n_times_to_eat;
-	unsigned		*forks;
+	pthread_mutex_t	*forks;
 }				t_args;
 
 typedef struct	s_philo
@@ -32,6 +32,8 @@ typedef struct	s_philo
 	unsigned		id;
 	struct timeval	last_eat_time;
 	unsigned		eat_count;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t	*right_fork;
 }				t_philo;
 
 int check_args_n(int argc, char *str)
@@ -51,8 +53,11 @@ int check_args_n(int argc, char *str)
 int	fill_var(unsigned n, t_args *args, size_t i)
 {
 	if (i == 0)
-		if (n == 0)
+		if (n < 2)
+		{
+			ft_putstr_fd("Atleast two philosophers are required\n", STDERR_FILENO);
 			return (-1);
+		}
 		else
 			args->n_philos = n;
 	else if (i == 1)
@@ -98,6 +103,55 @@ unsigned	get_time_diff(struct timeval *start, struct timeval *curr)
 	return (ms);
 }
 
+void	lock_forks(t_philo *ph)
+{
+	struct timeval	curr;
+	struct timeval	*start;
+	int				left_locked;
+	int				right_locked;
+
+	start = &ph->args->start_time;
+	while (TRUE)
+	{
+		left_locked = !pthread_mutex_lock(ph->left_fork);
+		if (left_locked)
+		{
+			gettimeofday(&curr, NULL);
+			printf("%u -> %u has taken a fork\n", get_time_diff(start, &curr), ph->id);
+			right_locked = !pthread_mutex_lock(ph->right_fork);
+			if (right_locked)
+			{
+				gettimeofday(&curr, NULL);
+				printf("%u -> %u has taken a fork\n", get_time_diff(start, &curr), ph->id);
+				return ;
+			}
+			else
+			{
+				gettimeofday(&curr, NULL);
+				printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
+				printf("TODO: Either the scheduler is very good"
+						" or this condition is not working\n");
+				pthread_mutex_unlock(ph->left_fork);
+			}
+		}
+		usleep(500);
+	}
+}
+
+void	unlock_forks(t_philo *ph)
+{
+	struct timeval	curr;
+	struct timeval	*start;
+
+	start = &ph->args->start_time;
+	pthread_mutex_unlock(ph->right_fork);
+	gettimeofday(&curr, NULL);
+	printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
+	pthread_mutex_unlock(ph->left_fork);
+	gettimeofday(&curr, NULL);
+	printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
+}
+
 void	*run_philo(void *vars)
 {
 	t_philo			*ph;
@@ -109,12 +163,17 @@ void	*run_philo(void *vars)
 	while (TRUE)
 	{
 		gettimeofday(&curr, NULL);
+		printf("%u -> %u is thinking\n", get_time_diff(start, &curr), ph->id);
+		lock_forks(ph);
+		gettimeofday(&curr, NULL);
 		ph->last_eat_time = curr;
 		printf("%u -> %u is eating\n", get_time_diff(start, &curr), ph->id);
 		usleep(ph->args->time_to_eat * 1000);
+		unlock_forks(ph);
 		gettimeofday(&curr, NULL);
 		printf("%u -> %u is sleeping\n", get_time_diff(start, &curr), ph->id);
 		usleep(ph->args->time_to_sleep * 1000);
+		gettimeofday(&curr, NULL);
 	}
 	return (NULL);
 }
@@ -133,15 +192,21 @@ int	main(int argc, char **argv)
 		return (1);
 	gettimeofday(&args.start_time, NULL);
 	ph = malloc(sizeof(*ph) * args.n_philos);
-	//args.forks = malloc(sizeof(args.forks) * args.n_philos);
+	args.forks = malloc(sizeof(*args.forks) * args.n_philos);
+	for (unsigned i = 0; i < args.n_philos; i++)
+		pthread_mutex_init(&args.forks[i], NULL);
 	for (unsigned i = 0; i < args.n_philos; i++)
 	{
-		ph[i].id = i;
+		ph[i].id = i + 1;
 		ph[i].args = &args;
+		ph[i].left_fork = &args.forks[i];
+		ph[i].right_fork = &args.forks[(i + 1) % args.n_philos];
 		pthread_create(&ph[i].thread, NULL, &run_philo, &ph[i]);
 	}
 	for (unsigned i = 0; i < args.n_philos; i++)
 		pthread_join(ph[i].thread, NULL);
+	for (unsigned i = 0; i < args.n_philos; i++)
+		pthread_mutex_destroy(&args.forks[i]);
 	free(ph);
 	return (0);
 }
