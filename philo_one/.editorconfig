@@ -1,0 +1,7 @@
+# top-most EditorConfig file
+root = true
+
+# Set tab size to 4
+[*.{c,h}]
+indent_style = tab
+indent_size = 4
