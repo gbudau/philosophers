@@ -28,6 +28,9 @@ $(OBJ_DIR):
 $(NAME): $(OBJ)
 	$(CC) $(CFLAGS) $(OBJ) -o $@ -I/$(INC_DIR) $(LFLAGS)
 
+.PHONY: fsanitizethread
+fsanitizethread: CFLAGS += -g3 -fsanitize=thread
+fsanitizethread: fclean all
 
 .PHONY: clean
 clean:
