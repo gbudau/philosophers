@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/09 23:05:23 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/13 15:10:56 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ typedef struct	s_philo
 	unsigned		id;
 	struct timeval	last_eat_time;
 	unsigned		eat_count;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*first_fork;
+	pthread_mutex_t	*second_fork;
 }				t_philo;
 
 int check_args_n(int argc, char *str)
@@ -102,59 +102,37 @@ unsigned	get_time_diff(struct timeval *start, struct timeval *curr)
 	return (ms);
 }
 
-int		lock_forks(t_philo *ph)
+int		pickup_forks(t_philo *ph)
 {
 	struct timeval	curr;
 	struct timeval	*start;
-	int				left_locked;
-	int				right_locked;
 
 	start = &ph->args->start_time;
 	gettimeofday(&curr, NULL);
-	if (get_time_diff(&ph->last_eat_time, &curr) >= ph->args->time_to_die)
-		return (-1);
-	left_locked = !pthread_mutex_lock(ph->left_fork);
-	if (left_locked)
-	{
-		gettimeofday(&curr, NULL);
-		printf("%u -> %u has taken a fork\n", get_time_diff(start, &curr), ph->id);
-		if (get_time_diff(&ph->last_eat_time, &curr) >= ph->args->time_to_die)
-		{
-			printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
-			pthread_mutex_unlock(ph->left_fork);
-			return (-1);
-		}
-		right_locked = !pthread_mutex_lock(ph->right_fork);
-		gettimeofday(&curr, NULL);
-		if (right_locked)
-		{
-			printf("%u -> %u has taken a fork\n", get_time_diff(start, &curr), ph->id);
-			return (0);
-		}
-		else
-		{
-			printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
-			pthread_mutex_unlock(ph->left_fork);
-		}
-	}
+	printf("%u -> %u is thinking\n", get_time_diff(start, &curr), ph->id);
+	pthread_mutex_lock(ph->first_fork);
+	gettimeofday(&curr, NULL);
+	printf("%u -> %u has taken a fork\n", get_time_diff(start, &curr), ph->id);
+	pthread_mutex_lock(ph->second_fork);
+	gettimeofday(&curr, NULL);
+	printf("%u -> %u has taken a fork\n", get_time_diff(start, &curr), ph->id);
 	return (0);
 }
 
-void	unlock_forks(t_philo *ph)
+void	drop_forks(t_philo *ph)
 {
 	struct timeval	curr;
 	struct timeval	*start;
 
 	start = &ph->args->start_time;
-	pthread_mutex_unlock(ph->right_fork);
+	pthread_mutex_unlock(ph->second_fork);
 	gettimeofday(&curr, NULL);
 	printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
-	pthread_mutex_unlock(ph->left_fork);
-	gettimeofday(&curr, NULL);
+	pthread_mutex_unlock(ph->first_fork);
 	printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
 }
 
-void	*run_philo(void *vars)
+void	*dine_philo(void *vars)
 {
 	t_philo			*ph;
 	struct timeval	curr;
@@ -165,25 +143,24 @@ void	*run_philo(void *vars)
 	start = &ph->args->start_time;
 	while (TRUE)
 	{
+		pickup_forks(ph);
 		gettimeofday(&curr, NULL);
-		printf("%u -> %u is thinking\n", get_time_diff(start, &curr), ph->id);
-		if (lock_forks(ph) == -1)
+		if (get_time_diff(&ph->last_eat_time, &curr) >= ph->args->time_to_die)
 		{
-			gettimeofday(&curr, NULL);
+			drop_forks(ph);
 			printf("%u -> %u died\n", get_time_diff(start, &curr), ph->id);
 			return (NULL);
 		}
-		gettimeofday(&curr, NULL);
 		ph->last_eat_time = curr;
 		printf("%u -> %u is eating\n", get_time_diff(start, &curr), ph->id);
 		usleep(ph->args->time_to_eat * 1000);
-		unlock_forks(ph);
+		drop_forks(ph);
 		gettimeofday(&curr, NULL);
 		diff_before_sleep = get_time_diff(&ph->last_eat_time, &curr) + ph->args->time_to_sleep;
 		if (diff_before_sleep >= ph->args->time_to_die)
 		{
 			printf("%u -> %u is sleeping\n", get_time_diff(start, &curr), ph->id);
-			usleep((diff_before_sleep - ph->args->time_to_sleep) * 1000);
+			usleep((ph->args->time_to_die - get_time_diff(&ph->last_eat_time, &curr)) * 1000);
 			gettimeofday(&curr, NULL);
 			printf("%u -> %u died\n", get_time_diff(start, &curr), ph->id);
 			return (NULL);
@@ -216,10 +193,10 @@ int	main(int argc, char **argv)
 	{
 		ph[i].id = i + 1;
 		ph[i].args = &args;
-		ph[i].left_fork = &forks[i];
-		ph[i].right_fork = &forks[(i + 1) % args.n_philos];
+		ph[i].first_fork = &forks[(i + i % 2) % args.n_philos];
+		ph[i].second_fork = &forks[(i + !(i % 2)) % args.n_philos];
 		ph[i].last_eat_time = args.start_time;
-		pthread_create(&ph[i].thread, NULL, &run_philo, &ph[i]);
+		pthread_create(&ph[i].thread, NULL, &dine_philo, &ph[i]);
 	}
 	for (unsigned i = 0; i < args.n_philos; i++)
 		pthread_join(ph[i].thread, NULL);
