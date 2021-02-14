@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/14 14:57:24 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/14 15:11:56 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,7 @@ void	*monitor_philos(void *vars)
 		for (unsigned i = 0; i < args->n_philos; i++)
 		{
 			gettimeofday(&curr, NULL);
-			time_diff = get_time_diff(&ph->last_eat_time, &curr);
+			time_diff = get_time_diff(&ph[i].last_eat_time, &curr);
 			if (time_diff >= ph[i].args->time_to_die)
 			{
 				mon->stop_simulation = 1;
