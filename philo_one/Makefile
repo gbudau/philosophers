@@ -32,6 +32,14 @@ $(NAME): $(OBJ)
 fsanitizethread: CFLAGS += -g3 -fsanitize=thread
 fsanitizethread: fclean all
 
+.PHONY: memoryleaks
+memoryleaks: CFLAGS += -g3 -fsanitize=leak
+memoryleaks: fclean all
+
+.PHONY: fsanitizeaddress
+fsanitizeaddress: CFLAGS += -g3 -fsanitize=address
+fsanitizeaddress: re
+
 .PHONY: clean
 clean:
 	$(RMF) $(OBJ_DIR)
