@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/14 19:11:50 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/14 21:54:30 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,10 +31,12 @@ typedef struct	s_philo
 	unsigned		id;
 	struct timeval	last_eat_time;
 	unsigned		eat_count;
+	unsigned		dining_complete;
 	pthread_mutex_t	*first_fork;
 	pthread_mutex_t	*second_fork;
 	pthread_mutex_t	*print_status;
 	pthread_mutex_t	*check_starvation;
+	pthread_mutex_t *check_dining_complete;
 }				t_philo;
 
 typedef struct	s_monitor
@@ -44,6 +46,8 @@ typedef struct	s_monitor
 	pthread_t		thread;
 	pthread_mutex_t	*check_starvation;
 	pthread_mutex_t	print_status;
+	pthread_mutex_t	*check_dining_complete;
+	unsigned		dining_complete_all;
 }				t_monitor;
 
 int check_args_n(int argc, char *str)
@@ -167,6 +171,16 @@ void	*dine_philo(void *vars)
 		gettimeofday(&curr, NULL);
 		pthread_mutex_lock(ph->check_starvation);
 		ph->last_eat_time = curr;
+		if (ph->args->limit_times_to_eat)
+		{
+			ph->eat_count++;
+			if (ph->eat_count == ph->args->n_times_to_eat)
+			{
+				pthread_mutex_lock(ph->check_dining_complete);
+				ph->dining_complete = TRUE;
+				pthread_mutex_unlock(ph->check_dining_complete);
+			}
+		}
 		pthread_mutex_unlock(ph->check_starvation);
 		pthread_mutex_lock(ph->print_status);
 		printf("%u -> %u is eating\n", get_time_diff(start, &curr), ph->id);
@@ -205,6 +219,23 @@ void	*monitor_philos(void *vars)
 				return (&ph[i].id);
 			pthread_mutex_unlock(ph[i].check_starvation);
 		}
+		if (args->limit_times_to_eat)
+		{
+			mon->dining_complete_all = TRUE;
+			for (unsigned i = 0; i < args->n_philos; i++)
+			{
+				pthread_mutex_lock(ph[i].check_dining_complete);
+				if (ph[i].dining_complete == FALSE)
+				{
+					mon->dining_complete_all = FALSE;
+					pthread_mutex_unlock(ph[i].check_dining_complete);
+					break ;
+				}
+				pthread_mutex_unlock(ph[i].check_dining_complete);
+			}
+			if (mon->dining_complete_all == TRUE)
+				return (NULL);
+		}
 		usleep(5000);
 	}
 	return (NULL);
@@ -220,15 +251,21 @@ int	main(int argc, char **argv)
 	struct timeval	curr;
 
 	memset(&args, 0, sizeof(args));
+	memset(&mon, 0, sizeof(mon));
 	if (check_args_n(argc, argv[0]) == -1)
 		return (1);
 	if (argc == 6)
 		args.limit_times_to_eat = TRUE;
 	if (check_valid_args(argv + 1, &args) == -1)
 		return (1);
+	if (args.limit_times_to_eat && !args.n_times_to_eat)
+		return (0);
 	forks = malloc(sizeof(*forks) * args.n_philos);
 	mon.check_starvation = malloc(sizeof(*mon.check_starvation) * args.n_philos);
+	if (args.limit_times_to_eat)
+		mon.check_dining_complete = malloc(sizeof(*mon.check_dining_complete) * args.n_philos);
 	ph = malloc(sizeof(*ph) * args.n_philos);
+	memset(ph, 0, sizeof(*ph) * args.n_philos);
 	for (unsigned i = 0; i < args.n_philos; i++)
 		pthread_mutex_init(&forks[i], NULL);
 	for (unsigned i = 0; i < args.n_philos; i++)
@@ -243,6 +280,8 @@ int	main(int argc, char **argv)
 		ph[i].second_fork = &forks[(i + !(i % 2)) % args.n_philos];
 		ph[i].last_eat_time = args.start_time;
 		ph[i].check_starvation = &mon.check_starvation[i];
+		if (args.limit_times_to_eat)
+			ph[i].check_dining_complete = &mon.check_dining_complete[i];
 		ph[i].print_status = &mon.print_status;
 		pthread_create(&ph[i].thread, NULL, &dine_philo, &ph[i]);
 	}
@@ -253,7 +292,10 @@ int	main(int argc, char **argv)
 	pthread_create(&mon.thread, NULL, &monitor_philos, &mon);
 	pthread_join(mon.thread, (void **)&id);
 	pthread_mutex_lock(&mon.print_status);
-	gettimeofday(&curr, NULL);
-	printf("%u -> %u died\n", get_time_diff(&args.start_time, &curr), *id);
+	if (id)
+	{
+		gettimeofday(&curr, NULL);
+		printf("%u -> %u died\n", get_time_diff(&args.start_time, &curr), *id);
+	}
 	return (0);
 }
