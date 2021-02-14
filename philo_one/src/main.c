@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/13 15:10:56 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/14 14:57:24 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,16 @@ typedef struct	s_philo
 	unsigned		eat_count;
 	pthread_mutex_t	*first_fork;
 	pthread_mutex_t	*second_fork;
+	int				*stop_simulation;
 }				t_philo;
+
+typedef struct	s_monitor
+{
+	pthread_t	thread;
+	t_args		*args;
+	t_philo		*ph;
+	int			stop_simulation;
+}				t_monitor;
 
 int check_args_n(int argc, char *str)
 {
@@ -137,7 +146,6 @@ void	*dine_philo(void *vars)
 	t_philo			*ph;
 	struct timeval	curr;
 	struct timeval	*start;
-	unsigned		diff_before_sleep;
 
 	ph = vars;
 	start = &ph->args->start_time;
@@ -145,28 +153,41 @@ void	*dine_philo(void *vars)
 	{
 		pickup_forks(ph);
 		gettimeofday(&curr, NULL);
-		if (get_time_diff(&ph->last_eat_time, &curr) >= ph->args->time_to_die)
-		{
-			drop_forks(ph);
-			printf("%u -> %u died\n", get_time_diff(start, &curr), ph->id);
-			return (NULL);
-		}
 		ph->last_eat_time = curr;
 		printf("%u -> %u is eating\n", get_time_diff(start, &curr), ph->id);
 		usleep(ph->args->time_to_eat * 1000);
 		drop_forks(ph);
 		gettimeofday(&curr, NULL);
-		diff_before_sleep = get_time_diff(&ph->last_eat_time, &curr) + ph->args->time_to_sleep;
-		if (diff_before_sleep >= ph->args->time_to_die)
-		{
-			printf("%u -> %u is sleeping\n", get_time_diff(start, &curr), ph->id);
-			usleep((ph->args->time_to_die - get_time_diff(&ph->last_eat_time, &curr)) * 1000);
-			gettimeofday(&curr, NULL);
-			printf("%u -> %u died\n", get_time_diff(start, &curr), ph->id);
-			return (NULL);
-		}
 		printf("%u -> %u is sleeping\n", get_time_diff(start, &curr), ph->id);
 		usleep(ph->args->time_to_sleep * 1000);
+	}
+	return (NULL);
+}
+
+void	*monitor_philos(void *vars)
+{
+	struct timeval	curr;
+	unsigned		time_diff;
+	t_args			*args;
+	t_philo			*ph;
+	t_monitor		*mon;
+
+	mon = vars;
+	ph = mon->ph;
+	args = mon->args;
+	while (TRUE)
+	{
+		for (unsigned i = 0; i < args->n_philos; i++)
+		{
+			gettimeofday(&curr, NULL);
+			time_diff = get_time_diff(&ph->last_eat_time, &curr);
+			if (time_diff >= ph[i].args->time_to_die)
+			{
+				mon->stop_simulation = 1;
+				return (&ph[i].id);
+			}
+		}
+		usleep(5000);
 	}
 	return (NULL);
 }
@@ -175,7 +196,10 @@ int	main(int argc, char **argv)
 {
 	t_args			args;
 	t_philo			*ph;
+	t_monitor		mon;
 	pthread_mutex_t	*forks;
+	unsigned		*id;
+	struct timeval	curr;
 
 	memset(&args, 0, sizeof(args));
 	if (check_args_n(argc, argv[0]) == -1)
@@ -184,11 +208,12 @@ int	main(int argc, char **argv)
 		args.limit_times_to_eat = TRUE;
 	if (check_valid_args(argv + 1, &args) == -1)
 		return (1);
-	gettimeofday(&args.start_time, NULL);
 	forks = malloc(sizeof(*forks) * args.n_philos);
 	ph = malloc(sizeof(*ph) * args.n_philos);
 	for (unsigned i = 0; i < args.n_philos; i++)
 		pthread_mutex_init(&forks[i], NULL);
+	mon.stop_simulation = 0;
+	gettimeofday(&args.start_time, NULL);
 	for (unsigned i = 0; i < args.n_philos; i++)
 	{
 		ph[i].id = i + 1;
@@ -196,13 +221,23 @@ int	main(int argc, char **argv)
 		ph[i].first_fork = &forks[(i + i % 2) % args.n_philos];
 		ph[i].second_fork = &forks[(i + !(i % 2)) % args.n_philos];
 		ph[i].last_eat_time = args.start_time;
+		ph[i].stop_simulation = &mon.stop_simulation;
 		pthread_create(&ph[i].thread, NULL, &dine_philo, &ph[i]);
 	}
 	for (unsigned i = 0; i < args.n_philos; i++)
-		pthread_join(ph[i].thread, NULL);
+		pthread_detach(ph[i].thread);
+	mon.args = &args;
+	mon.ph = ph;
+	pthread_create(&mon.thread, NULL, &monitor_philos, &mon);
+	pthread_join(mon.thread, (void **)&id);
+	gettimeofday(&curr, NULL);
+	printf("%u -> %u died\n", get_time_diff(&args.start_time, &curr), *id);
+	return (0);
+	/*
 	for (unsigned i = 0; i < args.n_philos; i++)
 		pthread_mutex_destroy(&forks[i]);
 	free(ph);
 	free(forks);
 	return (0);
+	*/
 }
