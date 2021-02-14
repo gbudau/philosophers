@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/06 18:38:36 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/06 18:50:44 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/14 15:58:51 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,5 +24,5 @@ size_t	ft_strlen(const char *str)
 
 void	ft_putstr_fd(const char *str, int fd)
 {
-	write(fd, str, ft_strlen(str));
+	(void)!write(fd, str, ft_strlen(str));
 }
