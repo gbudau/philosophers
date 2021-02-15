@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 21:22:37 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 22:00:05 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,38 +56,14 @@ void	drop_forks(t_philo *ph)
 void	*dine_philo(void *vars)
 {
 	t_philo			*ph;
-	struct timeval	curr;
-	struct timeval	*start;
 
 	ph = vars;
-	start = &ph->args->start_time;
 	while (TRUE)
 	{
 		pickup_forks(ph);
-		gettimeofday(&curr, NULL);
-		pthread_mutex_lock(ph->check_starvation);
-		ph->last_eat_time = curr;
-		if (ph->args->limit_times_to_eat)
-		{
-			ph->eat_count++;
-			if (ph->eat_count == ph->args->n_times_to_eat)
-			{
-				pthread_mutex_lock(ph->check_dining_complete);
-				ph->dining_complete = TRUE;
-				pthread_mutex_unlock(ph->check_dining_complete);
-			}
-		}
-		pthread_mutex_unlock(ph->check_starvation);
-		pthread_mutex_lock(ph->print_status);
-		ft_print_status(get_time_diff(start, &curr), ph->id, "is eating");
-		pthread_mutex_unlock(ph->print_status);
-		usleep(ph->args->time_to_eat * 1000);
+		eat_spaghetti(ph);
 		drop_forks(ph);
-		gettimeofday(&curr, NULL);
-		pthread_mutex_lock(ph->print_status);
-		ft_print_status(get_time_diff(start, &curr), ph->id, "is sleeping");
-		pthread_mutex_unlock(ph->print_status);
-		usleep(ph->args->time_to_sleep * 1000);
+		philo_sleep(ph);
 	}
 	return (NULL);
 }
