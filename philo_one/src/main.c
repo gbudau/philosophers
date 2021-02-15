@@ -6,20 +6,11 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 16:41:48 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 17:06:29 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_one.h"
-
-unsigned	get_time_diff(struct timeval *start, struct timeval *curr)
-{
-	unsigned	ms;
-
-	ms = (curr->tv_sec - start->tv_sec) * 1000;
-	ms += (curr->tv_usec - start->tv_usec) / 1000;
-	return (ms);
-}
 
 int		pickup_forks(t_philo *ph)
 {
