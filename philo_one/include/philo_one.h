@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 17:05:32 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 20:06:56 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,5 +70,15 @@ unsigned	atou_error(const char *str, int *error);
 unsigned	ft_utoa(unsigned n, char *buffer);
 void		ft_print_status(unsigned ms, unsigned id, const char *status);
 unsigned	get_time_diff(struct timeval *start, struct timeval *curr);
+int			allocate_memory(t_philo **ph, pthread_mutex_t **forks,
+												t_monitor *mon, t_args *args);
+void		initialize_mutexes(pthread_mutex_t *forks, t_monitor *mon,
+																t_args *args);
+void		create_and_detach_philo_threads(t_philo *ph, pthread_mutex_t *forks,
+												t_monitor *mon, t_args *args);
+void		create_and_join_monitor_thread(t_monitor *mon, t_philo *ph,
+																t_args *args);
+void		*dine_philo(void *vars);
+void		*monitor_philos(void *vars);
 
 #endif

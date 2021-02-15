@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 17:06:29 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 20:06:02 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ int		pickup_forks(t_philo *ph)
 	pthread_mutex_lock(ph->print_status);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is thinking");
 	pthread_mutex_unlock(ph->print_status);
+	usleep(1000);
 	pthread_mutex_lock(ph->first_fork);
 	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
@@ -87,7 +88,6 @@ void	*dine_philo(void *vars)
 		ft_print_status(get_time_diff(start, &curr), ph->id, "is sleeping");
 		pthread_mutex_unlock(ph->print_status);
 		usleep(ph->args->time_to_sleep * 1000);
-		usleep(1000);
 	}
 	return (NULL);
 }
@@ -142,49 +142,15 @@ int	main(int argc, char **argv)
 	t_philo			*ph;
 	t_monitor		mon;
 	pthread_mutex_t	*forks;
-	unsigned		*id;
-	struct timeval	curr;
 
 	memset(&args, 0, sizeof(args));
 	memset(&mon, 0, sizeof(mon));
 	if (check_args(argc, argv, &args) == -1)
 		return (1);
-	forks = malloc(sizeof(*forks) * args.n_philos);
-	mon.check_starvation = malloc(sizeof(*mon.check_starvation) * args.n_philos);
-	if (args.limit_times_to_eat)
-		mon.check_dining_complete = malloc(sizeof(*mon.check_dining_complete) * args.n_philos);
-	ph = malloc(sizeof(*ph) * args.n_philos);
-	memset(ph, 0, sizeof(*ph) * args.n_philos);
-	for (unsigned i = 0; i < args.n_philos; i++)
-		pthread_mutex_init(&forks[i], NULL);
-	for (unsigned i = 0; i < args.n_philos; i++)
-		pthread_mutex_init(&mon.check_starvation[i], NULL);
-	pthread_mutex_init(&mon.print_status, NULL);
-	gettimeofday(&args.start_time, NULL);
-	for (unsigned i = 0; i < args.n_philos; i++)
-	{
-		ph[i].id = i + 1;
-		ph[i].args = &args;
-		ph[i].first_fork = &forks[(i + i % 2) % args.n_philos];
-		ph[i].second_fork = &forks[(i + !(i % 2)) % args.n_philos];
-		ph[i].last_eat_time = args.start_time;
-		ph[i].check_starvation = &mon.check_starvation[i];
-		if (args.limit_times_to_eat)
-			ph[i].check_dining_complete = &mon.check_dining_complete[i];
-		ph[i].print_status = &mon.print_status;
-		pthread_create(&ph[i].thread, NULL, &dine_philo, &ph[i]);
-	}
-	for (unsigned i = 0; i < args.n_philos; i++)
-		pthread_detach(ph[i].thread);
-	mon.args = &args;
-	mon.ph = ph;
-	pthread_create(&mon.thread, NULL, &monitor_philos, &mon);
-	pthread_join(mon.thread, (void **)&id);
-	pthread_mutex_lock(&mon.print_status);
-	if (id)
-	{
-		gettimeofday(&curr, NULL);
-		ft_print_status(get_time_diff(&args.start_time, &curr), *id, "died");
-	}
+	if (allocate_memory(&ph, &forks, &mon, &args) == -1)
+		return (1);
+	initialize_mutexes(forks, &mon, &args);
+	create_and_detach_philo_threads(ph, forks, &mon, &args);
+	create_and_join_monitor_thread(&mon, ph, &args);
 	return (0);
 }
