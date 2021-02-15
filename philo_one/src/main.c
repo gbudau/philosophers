@@ -6,107 +6,12 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/14 21:54:30 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 16:04:38 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_one.h"
 #include <stdio.h>
-
-typedef struct	s_args
-{
-	struct timeval	start_time;
-	int				limit_times_to_eat;
-	unsigned		n_philos;
-	unsigned		time_to_die;
-	unsigned		time_to_eat;
-	unsigned		time_to_sleep;
-	unsigned		n_times_to_eat;
-}				t_args;
-
-typedef struct	s_philo
-{
-	t_args			*args;
-	pthread_t		thread;
-	unsigned		id;
-	struct timeval	last_eat_time;
-	unsigned		eat_count;
-	unsigned		dining_complete;
-	pthread_mutex_t	*first_fork;
-	pthread_mutex_t	*second_fork;
-	pthread_mutex_t	*print_status;
-	pthread_mutex_t	*check_starvation;
-	pthread_mutex_t *check_dining_complete;
-}				t_philo;
-
-typedef struct	s_monitor
-{
-	t_args			*args;
-	t_philo			*ph;
-	pthread_t		thread;
-	pthread_mutex_t	*check_starvation;
-	pthread_mutex_t	print_status;
-	pthread_mutex_t	*check_dining_complete;
-	unsigned		dining_complete_all;
-}				t_monitor;
-
-int check_args_n(int argc, char *str)
-{
-	if (argc < 5 || argc > 6)
-	{
-		ft_putstr_fd("Usage: ", STDERR_FILENO);
-		ft_putstr_fd(str, STDERR_FILENO);
-		ft_putstr_fd("number_of_philosophers time_to_die "
-				"time_to_eat time_to_sleep "
-				"[number_of_times_each_philosopher_must_eat]\n", STDERR_FILENO);
-		return (-1);
-	}
-	return (0);
-}
-
-int	fill_var(unsigned n, t_args *args, size_t i)
-{
-	if (i == 0)
-		if (n < 2)
-		{
-			ft_putstr_fd("Atleast two philosophers are required\n", STDERR_FILENO);
-			return (-1);
-		}
-		else
-			args->n_philos = n;
-	else if (i == 1)
-		args->time_to_die = n;
-	else if (i == 2)
-		args->time_to_eat = n;
-	else if (i == 3)
-		args->time_to_sleep = n;
-	else if (i == 4)
-		args->n_times_to_eat = n;
-	return (0);
-}
-
-int check_valid_args(char **argv, t_args *args)
-{
-	size_t		i;
-	int			error;
-	unsigned	n;
-
-	i = 0;
-	while (argv[i])
-	{
-		error = TRUE;
-		n = atou_error(argv[i], &error);
-		if (error || fill_var(n, args, i) == -1)
-		{
-			ft_putstr_fd("Invalid argument: ", STDERR_FILENO);
-			ft_putstr_fd(argv[i], STDERR_FILENO);
-			ft_putstr_fd("\n", STDERR_FILENO);
-			return (-1);
-		}
-		i++;
-	}
-	return (0);
-}
 
 unsigned	get_time_diff(struct timeval *start, struct timeval *curr)
 {
@@ -252,14 +157,8 @@ int	main(int argc, char **argv)
 
 	memset(&args, 0, sizeof(args));
 	memset(&mon, 0, sizeof(mon));
-	if (check_args_n(argc, argv[0]) == -1)
+	if (check_args(argc, argv, &args) == -1)
 		return (1);
-	if (argc == 6)
-		args.limit_times_to_eat = TRUE;
-	if (check_valid_args(argv + 1, &args) == -1)
-		return (1);
-	if (args.limit_times_to_eat && !args.n_times_to_eat)
-		return (0);
 	forks = malloc(sizeof(*forks) * args.n_philos);
 	mon.check_starvation = malloc(sizeof(*mon.check_starvation) * args.n_philos);
 	if (args.limit_times_to_eat)
