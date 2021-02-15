@@ -6,12 +6,11 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 16:04:38 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 16:41:48 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_one.h"
-#include <stdio.h>
 
 unsigned	get_time_diff(struct timeval *start, struct timeval *curr)
 {
@@ -30,17 +29,17 @@ int		pickup_forks(t_philo *ph)
 	start = &ph->args->start_time;
 	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
-	printf("%u -> %u is thinking\n", get_time_diff(start, &curr), ph->id);
+	ft_print_status(get_time_diff(start, &curr), ph->id, "is thinking");
 	pthread_mutex_unlock(ph->print_status);
 	pthread_mutex_lock(ph->first_fork);
 	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
-	printf("%u -> %u has taken a fork\n", get_time_diff(start, &curr), ph->id);
+	ft_print_status(get_time_diff(start, &curr), ph->id, "has taken a fork");
 	pthread_mutex_unlock(ph->print_status);
 	pthread_mutex_lock(ph->second_fork);
 	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
-	printf("%u -> %u has taken a fork\n", get_time_diff(start, &curr), ph->id);
+	ft_print_status(get_time_diff(start, &curr), ph->id, "has taken a fork");
 	pthread_mutex_unlock(ph->print_status);
 	return (0);
 }
@@ -54,11 +53,11 @@ void	drop_forks(t_philo *ph)
 	pthread_mutex_unlock(ph->second_fork);
 	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
-	printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
+	ft_print_status(get_time_diff(start, &curr), ph->id, "has dropped a fork");
 	pthread_mutex_unlock(ph->print_status);
 	pthread_mutex_unlock(ph->first_fork);
 	pthread_mutex_lock(ph->print_status);
-	printf("%u -> %u has dropped a fork\n", get_time_diff(start, &curr), ph->id);
+	ft_print_status(get_time_diff(start, &curr), ph->id, "has dropped a fork");
 	pthread_mutex_unlock(ph->print_status);
 }
 
@@ -88,13 +87,13 @@ void	*dine_philo(void *vars)
 		}
 		pthread_mutex_unlock(ph->check_starvation);
 		pthread_mutex_lock(ph->print_status);
-		printf("%u -> %u is eating\n", get_time_diff(start, &curr), ph->id);
+		ft_print_status(get_time_diff(start, &curr), ph->id, "is eating");
 		pthread_mutex_unlock(ph->print_status);
 		usleep(ph->args->time_to_eat * 1000);
 		drop_forks(ph);
 		gettimeofday(&curr, NULL);
 		pthread_mutex_lock(ph->print_status);
-		printf("%u -> %u is sleeping\n", get_time_diff(start, &curr), ph->id);
+		ft_print_status(get_time_diff(start, &curr), ph->id, "is sleeping");
 		pthread_mutex_unlock(ph->print_status);
 		usleep(ph->args->time_to_sleep * 1000);
 		usleep(1000);
@@ -194,7 +193,7 @@ int	main(int argc, char **argv)
 	if (id)
 	{
 		gettimeofday(&curr, NULL);
-		printf("%u -> %u died\n", get_time_diff(&args.start_time, &curr), *id);
+		ft_print_status(get_time_diff(&args.start_time, &curr), *id, "died");
 	}
 	return (0);
 }
