@@ -8,7 +8,7 @@ INC_DIR = include
 SRC_DIR = src
 OBJ_DIR = obj
 
-_OBJ = main.o atou_error.o print_output.o
+_OBJ = main.o atou_error.o print_output.o ft_utoa.o
 OBJ := $(patsubst %, $(OBJ_DIR)/%, $(_OBJ))
 
 _DEPS = philo_one.h

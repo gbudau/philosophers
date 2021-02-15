@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/08 21:53:35 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 15:39:25 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@ enum		e_bool
 size_t		ft_strlen(const char *str);
 void		ft_putstr_fd(const char *str, int fd);
 unsigned	atou_error(const char *str, int *error);
+unsigned	ft_utoa(unsigned n, char *buffer);
 
 #endif
