@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 20:06:02 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 21:22:37 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,43 +94,22 @@ void	*dine_philo(void *vars)
 
 void	*monitor_philos(void *vars)
 {
-	struct timeval	curr;
-	unsigned		time_diff;
 	t_args			*args;
 	t_philo			*ph;
 	t_monitor		*mon;
+	unsigned		*id;
 
 	mon = vars;
 	ph = mon->ph;
 	args = mon->args;
 	while (TRUE)
 	{
-		for (unsigned i = 0; i < args->n_philos; i++)
-		{
-			gettimeofday(&curr, NULL);
-			pthread_mutex_lock(ph[i].check_starvation);
-			time_diff = get_time_diff(&ph[i].last_eat_time, &curr);
-			if (time_diff >= ph[i].args->time_to_die)
-				return (&ph[i].id);
-			pthread_mutex_unlock(ph[i].check_starvation);
-		}
+		id = check_starvation(ph, args);
+		if (id)
+			return ((void *)id);
 		if (args->limit_times_to_eat)
-		{
-			mon->dining_complete_all = TRUE;
-			for (unsigned i = 0; i < args->n_philos; i++)
-			{
-				pthread_mutex_lock(ph[i].check_dining_complete);
-				if (ph[i].dining_complete == FALSE)
-				{
-					mon->dining_complete_all = FALSE;
-					pthread_mutex_unlock(ph[i].check_dining_complete);
-					break ;
-				}
-				pthread_mutex_unlock(ph[i].check_dining_complete);
-			}
-			if (mon->dining_complete_all == TRUE)
+			if (is_dining_complete(ph, args))
 				return (NULL);
-		}
 		usleep(5000);
 	}
 	return (NULL);
