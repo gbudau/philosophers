@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 21:59:09 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 22:17:10 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,27 +62,26 @@ typedef struct	s_monitor
 	pthread_mutex_t	*check_dining_complete;
 }				t_monitor;
 
-int			check_args(int argc, char **argv, t_args *args);
-size_t		ft_strlen(const char *str);
-void		ft_putstr_fd(const char *str, int fd);
-unsigned	atou_error(const char *str, int *error);
-unsigned	ft_utoa(unsigned n, char *buffer);
-void		ft_print_status(unsigned ms, unsigned id, const char *status);
-unsigned	get_time_diff(struct timeval *start, struct timeval *curr);
-int			allocate_memory(t_philo **ph, pthread_mutex_t **forks,
+int				check_args(int argc, char **argv, t_args *args);
+void			ft_putstr_fd(const char *str, int fd);
+unsigned		atou_error(const char *str, int *error);
+unsigned		ft_utoa(unsigned n, char *buffer);
+void			ft_print_status(unsigned ms, unsigned id, const char *status);
+unsigned		get_time_diff(struct timeval *start, struct timeval *curr);
+int				allocate_memory(t_philo **ph, pthread_mutex_t **forks,
 												t_monitor *mon, t_args *args);
-void		initialize_mutexes(pthread_mutex_t *forks, t_monitor *mon,
+void			initialize_mutexes(pthread_mutex_t *forks, t_monitor *mon,
 																t_args *args);
-void		create_and_detach_philo_threads(t_philo *ph, pthread_mutex_t *forks,
-												t_monitor *mon, t_args *args);
-void		create_and_join_monitor_thread(t_monitor *mon, t_philo *ph,
+void			create_and_detach_philo_threads(t_philo *ph,
+						pthread_mutex_t *forks, t_monitor *mon, t_args *args);
+void			create_and_join_monitor_thread(t_monitor *mon, t_philo *ph,
 																t_args *args);
-void		*dine_philo(void *vars);
-void		*monitor_philos(void *vars);
-unsigned	*check_starvation(t_philo *ph, t_args *args);
-int			is_dining_complete(t_philo *ph, t_args *args);
-void		increment_eat_count(t_philo *ph);
-void		eat_spaghetti(t_philo *ph);
-void		philo_sleep(t_philo *ph);
+void			*dine_philo(void *vars);
+void			*monitor_philos(void *vars);
+unsigned		*check_starvation(t_philo *ph, t_args *args);
+int				is_dining_complete(t_philo *ph, t_args *args);
+void			increment_eat_count(t_philo *ph);
+void			eat_spaghetti(t_philo *ph);
+void			philo_sleep(t_philo *ph);
 
 #endif

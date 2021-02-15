@@ -6,13 +6,13 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/06 18:38:36 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 16:34:50 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 22:17:00 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_one.h"
 
-size_t		ft_strlen(const char *str)
+static size_t	ft_strlen(const char *str)
 {
 	const char *start;
 

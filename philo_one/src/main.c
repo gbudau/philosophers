@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 22:00:05 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 22:07:11 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	*monitor_philos(void *vars)
 	return (NULL);
 }
 
-int	main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	t_args			args;
 	t_philo			*ph;

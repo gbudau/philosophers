@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 20:07:18 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 22:18:08 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void		initialize_mutexes(pthread_mutex_t *forks, t_monitor *mon,
 																t_args *args)
 {
 	unsigned	i;
-	
+
 	i = 0;
 	while (i < args->n_philos)
 		pthread_mutex_init(&forks[i++], NULL);
@@ -67,7 +67,7 @@ void		initialize_mutexes(pthread_mutex_t *forks, t_monitor *mon,
 void		create_and_detach_philo_threads(t_philo *ph, pthread_mutex_t *forks,
 												t_monitor *mon, t_args *args)
 {
-	unsigned		i;
+	unsigned	i;
 
 	gettimeofday(&args->start_time, NULL);
 	i = 0;

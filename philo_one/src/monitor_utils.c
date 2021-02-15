@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 21:02:09 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 21:22:09 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 22:16:05 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,19 @@ unsigned	*check_starvation(t_philo *ph, t_args *args)
 
 int			is_dining_complete(t_philo *ph, t_args *args)
 {
-		for (unsigned i = 0; i < args->n_philos; i++)
+	unsigned	i;
+
+	i = 0;
+	while (i < args->n_philos)
+	{
+		pthread_mutex_lock(ph[i].check_dining_complete);
+		if (ph[i].dining_complete == FALSE)
 		{
-			pthread_mutex_lock(ph[i].check_dining_complete);
-			if (ph[i].dining_complete == FALSE)
-			{
-				pthread_mutex_unlock(ph[i].check_dining_complete);
-				return (FALSE);
-			}
 			pthread_mutex_unlock(ph[i].check_dining_complete);
+			return (FALSE);
 		}
-		return (TRUE);
+		pthread_mutex_unlock(ph[i].check_dining_complete);
+		i++;
+	}
+	return (TRUE);
 }

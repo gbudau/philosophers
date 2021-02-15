@@ -6,13 +6,13 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 15:43:16 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 17:02:16 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 22:13:45 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_one.h"
 
-static int check_args_n(int argc, char *str)
+static int	check_args_n(int argc, char *str)
 {
 	if (argc < 5 || argc > 6)
 	{
@@ -28,35 +28,31 @@ static int check_args_n(int argc, char *str)
 
 static int	fill_var(unsigned n, t_args *args, size_t i)
 {
-	if (i == 0)
-		if (n < 2)
-		{
-			ft_putstr_fd("Atleast two philosophers are required\n", STDERR_FILENO);
-			return (-1);
-		}
-		else
-			args->n_philos = n;
+	if (i == 0 && n < 2)
+	{
+		ft_putstr_fd("Atleast two philosophers are required\n", STDERR_FILENO);
+		return (-1);
+	}
+	else if (i == 0)
+		args->n_philos = n;
 	else if (i == 1)
 		args->time_to_die = n;
 	else if (i == 2)
 		args->time_to_eat = n;
 	else if (i == 3)
 		args->time_to_sleep = n;
-	else if (i == 4)
+	else if (i == 4 && n == 0)
 	{
-		if (n == 0)
-		{
-			ft_putstr_fd("The number of times each philosopher must eat "
-					"has to be a positive number\n", STDERR_FILENO);
-			return (-1);
-		}
-		else
-			args->n_times_to_eat = n;
+		ft_putstr_fd("The number of times each philosopher must eat "
+								"has to be a positive number\n", STDERR_FILENO);
+		return (-1);
 	}
+	else if (i == 4)
+		args->n_times_to_eat = n;
 	return (0);
 }
 
-static int check_overflow(unsigned n, size_t i)
+static int	check_overflow(unsigned n, size_t i)
 {
 	if (i == 1 || i == 2 || i == 3)
 	{
@@ -69,7 +65,7 @@ static int check_overflow(unsigned n, size_t i)
 	return (0);
 }
 
-static int check_valid_args(char **argv, t_args *args)
+static int	check_valid_args(char **argv, t_args *args)
 {
 	size_t		i;
 	int			error;
@@ -92,7 +88,7 @@ static int check_valid_args(char **argv, t_args *args)
 	return (0);
 }
 
-int	check_args(int argc, char **argv, t_args *args)
+int			check_args(int argc, char **argv, t_args *args)
 {
 	if (check_args_n(argc, argv[0]) == -1)
 		return (-1);
