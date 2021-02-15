@@ -1,0 +1,23 @@
+# .github/workflows/norminette.yml
+on:
+  pull_request:
+    branches:
+    - master
+name: norminette
+
+jobs:
+  norminette_job:
+    runs-on: ubuntu-latest
+    name: norminette
+    steps:
+    - name: checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - name: get changed files
+      id: getfile
+      run: |
+        echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }}| xargs | egrep '\.c$|\.h$')"
+    - uses: alexandregv/norminette-action@v2
+      with:
+        flags: ${{ steps.getfile.outputs.files }}
