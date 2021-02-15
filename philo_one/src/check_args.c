@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 15:43:16 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 16:02:20 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/15 17:02:16 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,19 @@ static int	fill_var(unsigned n, t_args *args, size_t i)
 	return (0);
 }
 
+static int check_overflow(unsigned n, size_t i)
+{
+	if (i == 1 || i == 2 || i == 3)
+	{
+		if (n > UINT_MAX / 1000)
+		{
+			ft_putstr_fd("Value too high\n", STDERR_FILENO);
+			return (-1);
+		}
+	}
+	return (0);
+}
+
 static int check_valid_args(char **argv, t_args *args)
 {
 	size_t		i;
@@ -67,7 +80,7 @@ static int check_valid_args(char **argv, t_args *args)
 	{
 		error = TRUE;
 		n = atou_error(argv[i], &error);
-		if (error || fill_var(n, args, i) == -1)
+		if (error || check_overflow(n, i) == -1 || fill_var(n, args, i) == -1)
 		{
 			ft_putstr_fd("Invalid argument: ", STDERR_FILENO);
 			ft_putstr_fd(argv[i], STDERR_FILENO);
