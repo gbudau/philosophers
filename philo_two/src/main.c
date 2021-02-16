@@ -6,13 +6,13 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/16 19:01:25 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/16 19:21:01 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_two.h"
 
-int		pickup_forks(t_philo *ph)
+static void	pickup_forks(t_philo *ph)
 {
 	struct timeval	curr;
 	struct timeval	*start;
@@ -33,10 +33,9 @@ int		pickup_forks(t_philo *ph)
 	sem_wait(ph->print_status);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "has taken a fork");
 	sem_post(ph->print_status);
-	return (0);
 }
 
-void	drop_forks(t_philo *ph)
+static void	drop_forks(t_philo *ph)
 {
 	struct timeval	curr;
 	struct timeval	*start;
@@ -53,7 +52,7 @@ void	drop_forks(t_philo *ph)
 	sem_post(ph->print_status);
 }
 
-void	*dine_philo(void *vars)
+void		*dine_philo(void *vars)
 {
 	t_philo			*ph;
 
@@ -68,7 +67,7 @@ void	*dine_philo(void *vars)
 	return (NULL);
 }
 
-void	*monitor_philos(void *vars)
+void		*monitor_philos(void *vars)
 {
 	t_args			*args;
 	t_philo			*ph;
@@ -91,7 +90,7 @@ void	*monitor_philos(void *vars)
 	return (NULL);
 }
 
-int		main(int argc, char **argv)
+int			main(int argc, char **argv)
 {
 	t_args		args;
 	t_philo		*ph;
