@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/16 18:35:57 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/16 18:59:06 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,12 @@ int			allocate_memory(t_philo **ph, t_monitor *mon, t_args *args)
 	mon->check_starvation = malloc(sizeof(sem_t *) * args->n_philos);
 	if (mon->check_starvation == NULL)
 		return (-1);
-	if (!args->limit_times_to_eat)
-		return (0);
-	mon->check_dining_complete = malloc(sizeof(sem_t *) * args->n_philos);
-	if (mon->check_dining_complete == NULL)
-		return (-1);
+	if (args->limit_times_to_eat)
+	{
+		mon->check_dining_complete = malloc(sizeof(sem_t *) * args->n_philos);
+		if (mon->check_dining_complete == NULL)
+			return (-1);
+	}
 	return (0);
 }
 
@@ -67,13 +68,15 @@ void		open_semaphores(sem_t **forks, t_monitor *mon, t_args *args)
 		sem_name = create_sem_name("/check_starvation", i + 1);
 		mon->check_starvation[i++] = sem_open(sem_name, oflag, mode, 1);
 	}
-	if (!args->limit_times_to_eat)
-		return ;
-	i = 0;
-	while (i < args->n_philos)
+	if (args->limit_times_to_eat)
 	{
-		sem_name = create_sem_name("/check_dining_complete", i + 1);
-		mon->check_dining_complete[i++] = sem_open(sem_name, oflag, mode, 1);
+		i = 0;
+		while (i < args->n_philos)
+		{
+			sem_name = create_sem_name("/check_dining_complete", i + 1);
+			mon->check_dining_complete[i++] =
+											sem_open(sem_name, oflag, mode, 1);
+		}
 	}
 }
 
@@ -134,13 +137,14 @@ void		unlink_semaphores(t_args *args)
 		sem_unlink(sem_name);
 		i++;
 	}
-	if (!args->limit_times_to_eat)
-		return ;
-	i = 0;
-	while (i < args->n_philos)
+	if (args->limit_times_to_eat)
 	{
-		sem_name = create_sem_name("/check_dining_complete", i + 1);
-		sem_unlink(sem_name);
-		i++;
+		i = 0;
+		while (i < args->n_philos)
+		{
+			sem_name = create_sem_name("/check_dining_complete", i + 1);
+			sem_unlink(sem_name);
+			i++;
+		}
 	}
 }
