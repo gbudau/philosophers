@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/16 18:33:04 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/16 19:12:57 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,5 +86,6 @@ void			increment_eat_count(t_philo *ph);
 void			eat_spaghetti(t_philo *ph);
 void			philo_sleep(t_philo *ph);
 void			unlink_semaphores(t_args *args);
+char			*create_sem_name(const char *str, unsigned id);
 
 #endif

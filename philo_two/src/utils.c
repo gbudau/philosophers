@@ -6,32 +6,11 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/16 18:59:06 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/16 19:11:34 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_two.h"
-
-unsigned	get_time_diff(struct timeval *start, struct timeval *curr)
-{
-	unsigned	ms;
-
-	ms = (curr->tv_sec - start->tv_sec) * 1000;
-	ms += (curr->tv_usec - start->tv_usec) / 1000;
-	return (ms);
-}
-
-char		*create_sem_name(const char *str, unsigned id)
-{
-	static char	sem_name[64];
-	char		philo_id[12];
-	unsigned	i;
-
-	i = ft_strcpy(sem_name, str);
-	ft_utoa(id, philo_id);
-	ft_strcpy(sem_name + i, philo_id);
-	return (sem_name);
-}
 
 int			allocate_memory(t_philo **ph, t_monitor *mon, t_args *args)
 {
@@ -127,9 +106,9 @@ void		unlink_semaphores(t_args *args)
 {
 	unsigned	i;
 	char		*sem_name;
+
 	sem_unlink("/forks");
 	sem_unlink("/print_status");
-
 	i = 0;
 	while (i < args->n_philos)
 	{
