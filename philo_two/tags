@@ -1,0 +1,84 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CC	Makefile	/^CC = gcc$/;"	m
+CFLAGS	Makefile	/^CFLAGS = -Wall -Werror -Wextra$/;"	m
+DEPS	Makefile	/^DEPS := $(patsubst %, $(INC_DIR)\/%, $(_DEPS))$/;"	m
+FALSE	include/philo_two.h	/^	FALSE,$/;"	e	enum:e_bool
+INC_DIR	Makefile	/^INC_DIR = include$/;"	m
+LFLAGS	Makefile	/^LFLAGS = -lpthread$/;"	m
+NAME	Makefile	/^NAME = philo_two$/;"	m
+OBJ	Makefile	/^OBJ := $(patsubst %, $(OBJ_DIR)\/%, $(_OBJ))$/;"	m
+OBJ_DIR	Makefile	/^OBJ_DIR = obj$/;"	m
+PHILO_TWO_H	include/philo_two.h	14;"	d
+RMF	Makefile	/^RMF = rm -rf$/;"	m
+SRC_DIR	Makefile	/^SRC_DIR = src$/;"	m
+TRUE	include/philo_two.h	/^	TRUE$/;"	e	enum:e_bool
+_DEPS	Makefile	/^_DEPS = philo_two.h$/;"	m
+_OBJ	Makefile	/^_OBJ = main.o atou_error.o print_output.o ft_utoa.o check_args.o \\$/;"	m
+allocate_memory	src/utils.c	/^int			allocate_memory(t_philo **ph, t_monitor *mon, t_args *args)$/;"	f
+args	include/philo_two.h	/^	t_args			*args;$/;"	m	struct:s_philo
+args	include/philo_two.h	/^	t_args		*args;$/;"	m	struct:s_monitor
+atou_error	src/atou_error.c	/^unsigned	atou_error(const char *str, int *error)$/;"	f
+check_args	src/check_args.c	/^int			check_args(int argc, char **argv, t_args *args)$/;"	f
+check_args_n	src/check_args.c	/^static int	check_args_n(int argc, char *str)$/;"	f	file:
+check_dining_complete	include/philo_two.h	/^	sem_t			*check_dining_complete;$/;"	m	struct:s_philo
+check_dining_complete	include/philo_two.h	/^	sem_t		**check_dining_complete;$/;"	m	struct:s_monitor
+check_overflow	src/check_args.c	/^static int	check_overflow(unsigned n, size_t i)$/;"	f	file:
+check_starvation	include/philo_two.h	/^	sem_t			*check_starvation;$/;"	m	struct:s_philo
+check_starvation	include/philo_two.h	/^	sem_t		**check_starvation;$/;"	m	struct:s_monitor
+check_starvation	src/monitor_utils.c	/^unsigned	*check_starvation(t_philo *ph, t_args *args)$/;"	f
+check_valid_args	src/check_args.c	/^static int	check_valid_args(char **argv, t_args *args)$/;"	f	file:
+create_and_detach_philo_threads	src/utils.c	/^void		create_and_detach_philo_threads(t_philo *ph, sem_t *forks,$/;"	f
+create_and_join_monitor_thread	src/utils.c	/^void		create_and_join_monitor_thread(t_monitor *mon, t_philo *ph,$/;"	f
+create_sem_name	src/utils.c	/^char		*create_sem_name(const char *str, unsigned id)$/;"	f
+dine_philo	src/main.c	/^void	*dine_philo(void *vars)$/;"	f
+dining_complete	include/philo_two.h	/^	unsigned		dining_complete;$/;"	m	struct:s_philo
+drop_forks	src/main.c	/^void	drop_forks(t_philo *ph)$/;"	f
+e_bool	include/philo_two.h	/^enum		e_bool$/;"	g
+eat_count	include/philo_two.h	/^	unsigned		eat_count;$/;"	m	struct:s_philo
+eat_spaghetti	src/dine_philo_utils.c	/^void	eat_spaghetti(t_philo *ph)$/;"	f
+fill_var	src/check_args.c	/^static int	fill_var(unsigned n, t_args *args, size_t i)$/;"	f	file:
+forks	include/philo_two.h	/^	sem_t			*forks;$/;"	m	struct:s_philo
+ft_isdigit	src/atou_error.c	/^static int	ft_isdigit(int c)$/;"	f	file:
+ft_print_status	src/print_output.c	/^void			ft_print_status(unsigned ms, unsigned id, const char *status)$/;"	f
+ft_putstr_fd	src/print_output.c	/^void			ft_putstr_fd(const char *str, int fd)$/;"	f
+ft_reverse_str	src/ft_utoa.c	/^static void	ft_reverse_str(char *str, unsigned start, unsigned end)$/;"	f	file:
+ft_strcpy	src/print_output.c	/^unsigned		ft_strcpy(char *dst, const char *src)$/;"	f
+ft_strlen	src/print_output.c	/^size_t			ft_strlen(const char *str)$/;"	f
+ft_swap	src/ft_utoa.c	/^static void	ft_swap(char *a, char *b)$/;"	f	file:
+ft_utoa	src/ft_utoa.c	/^unsigned	ft_utoa(unsigned n, char *buffer)$/;"	f
+get_time_diff	src/utils.c	/^unsigned	get_time_diff(struct timeval *start, struct timeval *curr)$/;"	f
+id	include/philo_two.h	/^	unsigned		id;$/;"	m	struct:s_philo
+increment_eat_count	src/dine_philo_utils.c	/^void	increment_eat_count(t_philo *ph)$/;"	f
+is_add_overflow	src/atou_error.c	/^static int	is_add_overflow(unsigned a, unsigned b)$/;"	f	file:
+is_dining_complete	src/monitor_utils.c	/^int			is_dining_complete(t_philo *ph, t_args *args)$/;"	f
+is_mult_overflow	src/atou_error.c	/^static int	is_mult_overflow(unsigned a, unsigned b)$/;"	f	file:
+last_eat_time	include/philo_two.h	/^	struct timeval	last_eat_time;$/;"	m	struct:s_philo	typeref:struct:s_philo::timeval
+limit_times_to_eat	include/philo_two.h	/^	int				limit_times_to_eat;$/;"	m	struct:s_args
+main	src/main.c	/^int		main(int argc, char **argv)$/;"	f
+monitor_philos	src/main.c	/^void	*monitor_philos(void *vars)$/;"	f
+n_philos	include/philo_two.h	/^	unsigned		n_philos;$/;"	m	struct:s_args
+n_times_to_eat	include/philo_two.h	/^	unsigned		n_times_to_eat;$/;"	m	struct:s_args
+open_semaphores	src/utils.c	/^void		open_semaphores(sem_t **forks, t_monitor *mon, t_args *args)$/;"	f
+ph	include/philo_two.h	/^	t_philo		*ph;$/;"	m	struct:s_monitor
+philo_sleep	src/dine_philo_utils.c	/^void	philo_sleep(t_philo *ph)$/;"	f
+pickup_forks	src/main.c	/^int		pickup_forks(t_philo *ph)$/;"	f
+print_status	include/philo_two.h	/^	sem_t			*print_status;$/;"	m	struct:s_philo
+print_status	include/philo_two.h	/^	sem_t		*print_status;$/;"	m	struct:s_monitor
+s_args	include/philo_two.h	/^typedef struct	s_args$/;"	s
+s_monitor	include/philo_two.h	/^typedef struct	s_monitor$/;"	s
+s_philo	include/philo_two.h	/^typedef struct	s_philo$/;"	s
+start_time	include/philo_two.h	/^	struct timeval	start_time;$/;"	m	struct:s_args	typeref:struct:s_args::timeval
+t_args	include/philo_two.h	/^}				t_args;$/;"	t	typeref:struct:s_args
+t_monitor	include/philo_two.h	/^}				t_monitor;$/;"	t	typeref:struct:s_monitor
+t_philo	include/philo_two.h	/^}				t_philo;$/;"	t	typeref:struct:s_philo
+thread	include/philo_two.h	/^	pthread_t		thread;$/;"	m	struct:s_philo
+thread	include/philo_two.h	/^	pthread_t	thread;$/;"	m	struct:s_monitor
+time_to_die	include/philo_two.h	/^	unsigned		time_to_die;$/;"	m	struct:s_args
+time_to_eat	include/philo_two.h	/^	unsigned		time_to_eat;$/;"	m	struct:s_args
+time_to_sleep	include/philo_two.h	/^	unsigned		time_to_sleep;$/;"	m	struct:s_args
+unlink_semaphores	src/utils.c	/^void		unlink_semaphores(t_args *args)$/;"	f
