@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 00:15:55 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 00:17:26 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ typedef struct	s_super_monitor_dining_complete
 	sem_t		**lock_dining_complete;
 }				t_super_monitor_dining_complete;
 
-
 size_t			ft_strlen(const char *str);
 unsigned		ft_strcpy(char *dst, const char *src);
 int				check_args(int argc, char **argv, t_args *args);
@@ -97,7 +96,7 @@ void			ft_print_status(unsigned ms, unsigned id, const char *status);
 unsigned		get_time_diff(struct timeval *start, struct timeval *curr);
 void			open_semaphores(sem_t **forks, t_args *args,
 											t_monitor_dining_complete *mon_dc);
-void			create_philo_proc(sem_t *forks, t_args *args, pid_t *philos, 
+void			create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 											t_monitor_dining_complete *mon_dc);
 void			*dine_philo(void *vars);
 void			*monitor_self(void *vars);
