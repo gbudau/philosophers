@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/21 23:44:16 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/21 23:46:57 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,17 +109,8 @@ void		*set_dining_complete(void *vars)
 	t_monitor_dining_complete	*mon;
 
 	mon = vars;
-
-	// TODO Remove this
-	int test_value;
-	sem_getvalue(mon->dining_complete, &test_value);
-	printf("CCC Sem value is %d\n", test_value);
-
 	sem_wait(mon->dining_complete);
-	// TODO Remove
-	printf("OK from parent\n");
 	sem_wait(mon->lock_dining_complete);
-	printf("dining complete is %u\n", *mon->is_dining_complete);
 	*mon->is_dining_complete = TRUE;
 	sem_post(mon->lock_dining_complete);
 	return (NULL);
