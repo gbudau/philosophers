@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/21 23:38:34 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/21 23:44:16 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,21 @@ void		*dine_philo(void *vars)
 	return (NULL);
 }
 
+void		philo_died_exit(t_philo *ph, t_args *args)
+{
+	struct timeval	curr;
+
+	sem_wait(ph->print_status);
+	gettimeofday(&curr, NULL);
+	ft_print_status(get_time_diff(&args->start_time, &curr), ph->id, "died");
+	exit(1);
+}
+
 void		*monitor_self(void *vars)
 {
 	t_args			*args;
 	t_philo			*ph;
 	t_monitor		*mon;
-	struct timeval	curr;
 	int				dining_complete;
 
 	mon = vars;
@@ -82,29 +91,12 @@ void		*monitor_self(void *vars)
 	while (TRUE)
 	{
 		if (is_starving(ph, args))
-		{
-			sem_wait(ph->print_status);
-			gettimeofday(&curr, NULL);
-			ft_print_status(get_time_diff(&args->start_time, &curr), ph->id,
-																		"died");
-			exit(1);
-		}
+			philo_died_exit(ph, args);
 		if (!dining_complete && args->limit_times_to_eat &&
 														is_dining_complete(ph))
 		{
-			// TODO Remove
-			printf("dining_complete %u\n", ph->id);
 			dining_complete = TRUE;
 			sem_post(ph->dining_complete);
-
-			// TODO Remove this
-			if (ph->dining_complete != SEM_FAILED)
-			{
-				int test_value;
-				sem_getvalue(ph->dining_complete, &test_value);
-				printf("DDD Sem value is %d\n", test_value);
-			}
-
 		}
 		usleep(5000);
 	}
