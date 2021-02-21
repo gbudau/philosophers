@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/21 23:15:22 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 00:15:55 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,6 @@
 # include <signal.h>
 # include <sys/types.h>
 # include <sys/wait.h>
-
-// TODO Remove later
-# include <stdio.h>
-# include <errno.h>
 
 enum		e_bool
 {
