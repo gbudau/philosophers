@@ -6,13 +6,12 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/21 23:17:38 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/21 23:52:36 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_three.h"
 
-// TODO Rename to create_forks or something like that
 void		open_semaphores(sem_t **forks, t_args *args,
 											t_monitor_dining_complete *mon_dc)
 {
@@ -25,22 +24,11 @@ void		open_semaphores(sem_t **forks, t_args *args,
 	mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 	*forks = sem_open("/forks", oflag, mode, args->n_philos);
 	sem_unlink("/forks");
-
 	i = 0;
 	while (i < args->n_philos)
 	{
 		sem_name = create_sem_name("/dining_complete", i + 1);
-		printf("Parent monitor %s\n", sem_name);
-		errno = 0;
 		mon_dc[i].dining_complete = sem_open(sem_name, oflag, mode, 0);
-		if (errno)
-			perror("ERROR parent monitor semaphore");
-
-		// TODO Remove this
-		int test_value;
-		sem_getvalue(mon_dc[i].dining_complete, &test_value);
-		printf("BBB Sem value is %d\n", test_value);
-
 		sem_unlink(sem_name);
 		i++;
 	}
