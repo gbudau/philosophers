@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/21 23:51:06 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 00:20:54 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,6 @@ void		*monitor_self(void *vars)
 	return (NULL);
 }
 
-
 void		*set_dining_complete(void *vars)
 {
 	t_monitor_dining_complete	*mon;
@@ -157,10 +156,10 @@ void		create_and_detach_monitor_threads(t_args *args,
 	while (i < args->n_philos)
 	{
 		sem_name = create_sem_name("/lock_dining_complete", i);
-		super_mon->lock_dining_complete[i] = sem_open(sem_name, O_CREAT | O_EXCL,
+		super_mon->lock_dining_complete[i++] = sem_open(sem_name,
+															O_CREAT | O_EXCL,
 									S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, 1);
 		sem_unlink(sem_name);
-		i++;
 	}
 	i = 0;
 	while (i < args->n_philos)

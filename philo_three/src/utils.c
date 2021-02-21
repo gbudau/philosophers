@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 00:11:09 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 00:23:00 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void		open_semaphores(sem_t **forks, t_args *args,
 	}
 }
 
-void		clean_all_philos(pid_t	*philos, unsigned count)
+void		clean_all_philos(pid_t *philos, unsigned count)
 {
 	unsigned	i;
 
@@ -93,7 +93,7 @@ void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 {
 	unsigned	i;
 	pid_t		pid;
-	
+
 	gettimeofday(&args->start_time, NULL);
 	i = 0;
 	while (i < args->n_philos)
