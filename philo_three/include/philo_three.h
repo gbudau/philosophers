@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/20 15:42:12 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/21 23:15:22 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@
 # include <signal.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+
+// TODO Remove later
+# include <stdio.h>
+# include <errno.h>
 
 enum		e_bool
 {
@@ -49,10 +53,14 @@ typedef struct	s_philo
 	unsigned		id;
 	struct timeval	last_eat_time;
 	unsigned		eat_count;
-	unsigned		dining_complete;
+	unsigned		is_dining_complete;
+	unsigned		n_forks_picked_up;
 	sem_t			*forks;
 	sem_t			*print_status;
 	sem_t			*check_starvation;
+	sem_t			*check_dining_complete;
+	sem_t			*check_has_forks;
+	sem_t			*dining_complete;
 }				t_philo;
 
 typedef struct	s_monitor
@@ -62,7 +70,26 @@ typedef struct	s_monitor
 	pthread_t	thread;
 	sem_t		*print_status;
 	sem_t		*check_starvation;
+	sem_t		*check_dining_complete;
+	sem_t		*check_has_forks;
 }				t_monitor;
+
+typedef struct	s_monitor_dining_complete
+{
+	t_args		*args;
+	unsigned	*is_dining_complete;
+	sem_t		*dining_complete;
+	sem_t		*lock_dining_complete;
+}				t_monitor_dining_complete;
+
+typedef struct	s_super_monitor_dining_complete
+{
+	t_args		*args;
+	pid_t		*philos;
+	unsigned	*is_dining_complete;
+	sem_t		**lock_dining_complete;
+}				t_super_monitor_dining_complete;
+
 
 size_t			ft_strlen(const char *str);
 unsigned		ft_strcpy(char *dst, const char *src);
@@ -72,17 +99,22 @@ unsigned		atou_error(const char *str, int *error);
 unsigned		ft_utoa(unsigned n, char *buffer);
 void			ft_print_status(unsigned ms, unsigned id, const char *status);
 unsigned		get_time_diff(struct timeval *start, struct timeval *curr);
-void			open_semaphores(sem_t **forks, t_monitor *mon, t_args *args);
-void			create_philo_proc(sem_t *forks, t_monitor *mon, t_args *args,
-																pid_t *philos);
+void			open_semaphores(sem_t **forks, t_args *args,
+											t_monitor_dining_complete *mon_dc);
+void			create_philo_proc(sem_t *forks, t_args *args, pid_t *philos, 
+											t_monitor_dining_complete *mon_dc);
 void			*dine_philo(void *vars);
 void			*monitor_self(void *vars);
 int				is_starving(t_philo *ph, t_args *args);
-int				is_dining_complete(t_philo *ph, t_args *args);
+int				is_dining_complete(t_philo *ph);
 void			increment_eat_count(t_philo *ph);
 void			eat_spaghetti(t_philo *ph);
 void			philo_sleep(t_philo *ph);
-void			unlink_semaphores(void);
 char			*create_sem_name(const char *str, unsigned id);
+void			wait_all_philos(pid_t *philos, t_args *args);
+void			create_and_detach_monitor_threads(t_args *args,
+									t_super_monitor_dining_complete *super_mon,
+											t_monitor_dining_complete *mon_dc);
+void			clean_all_philos(pid_t	*philos, unsigned count);
 
 #endif
