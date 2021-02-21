@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 00:17:26 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 00:49:06 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,12 @@ enum		e_bool
 {
 	FALSE,
 	TRUE
+};
+
+enum		e_semaphore_flags
+{
+	SEM_OPEN_FLAG = O_CREAT | O_EXCL,
+	SEM_MODE_FLAG = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH
 };
 
 typedef struct	s_args
@@ -85,6 +91,12 @@ typedef struct	s_super_monitor_dining_complete
 	unsigned	*is_dining_complete;
 	sem_t		**lock_dining_complete;
 }				t_super_monitor_dining_complete;
+
+typedef struct	s_status_philo
+{
+	unsigned	id;
+	sem_t		*print_status;
+}				t_status_philo;
 
 size_t			ft_strlen(const char *str);
 unsigned		ft_strcpy(char *dst, const char *src);

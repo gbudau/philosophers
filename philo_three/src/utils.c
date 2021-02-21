@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 00:23:00 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 00:49:46 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,16 +34,8 @@ void		open_semaphores(sem_t **forks, t_args *args,
 	}
 }
 
-void		clean_all_philos(pid_t *philos, unsigned count)
-{
-	unsigned	i;
-
-	i = 0;
-	while (i < count)
-		kill(philos[i++], SIGKILL);
-}
-
-void		open_philosopher_sem(t_philo *ph, t_monitor *mon)
+static void	open_philosopher_sem(t_philo *ph, t_monitor *mon,
+															t_status_philo *sp)
 {
 	int		oflag;
 	int		mode;
@@ -51,9 +43,8 @@ void		open_philosopher_sem(t_philo *ph, t_monitor *mon)
 
 	oflag = O_CREAT | O_EXCL;
 	mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-	mon->print_status = sem_open("/print_status", oflag, mode, 1);
-	sem_unlink("/print_status");
-	ph->print_status = mon->print_status;
+	mon->print_status = sp->print_status;
+	ph->print_status = sp->print_status;
 	sem_name = create_sem_name("/check_starvation", ph->id);
 	mon->check_starvation = sem_open(sem_name, oflag, mode, 1);
 	sem_unlink(sem_name);
@@ -68,18 +59,18 @@ void		open_philosopher_sem(t_philo *ph, t_monitor *mon)
 	ph->check_has_forks = mon->check_has_forks;
 }
 
-void		run_philosopher(sem_t *forks, t_args *args, unsigned id,
+static void	run_philosopher(sem_t *forks, t_args *args, t_status_philo *sp,
 											t_monitor_dining_complete *mon_dc)
 {
 	t_philo		ph;
 	t_monitor	mon;
 
 	memset(&ph, 0, sizeof(ph));
-	ph.id = id;
+	ph.id = sp->id;
 	ph.args = args;
 	ph.forks = forks;
 	ph.last_eat_time = args->start_time;
-	open_philosopher_sem(&ph, &mon);
+	open_philosopher_sem(&ph, &mon, sp);
 	ph.dining_complete = mon_dc->dining_complete;
 	mon.ph = &ph;
 	mon.args = args;
@@ -91,10 +82,14 @@ void		run_philosopher(sem_t *forks, t_args *args, unsigned id,
 void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 											t_monitor_dining_complete *mon_dc)
 {
-	unsigned	i;
-	pid_t		pid;
+	unsigned		i;
+	pid_t			pid;
+	t_status_philo	sp;
+	sem_t			*print_status;
 
 	gettimeofday(&args->start_time, NULL);
+	print_status = sem_open("/print_status", SEM_OPEN_FLAG, SEM_MODE_FLAG, 1);
+	sem_unlink("/print_status");
 	i = 0;
 	while (i < args->n_philos)
 	{
@@ -105,9 +100,12 @@ void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 			exit(1);
 		}
 		if (pid == 0)
-			run_philosopher(forks, args, i + 1, &mon_dc[i]);
-		philos[i] = pid;
-		i++;
+		{
+			sp.id = i + 1;
+			sp.print_status = print_status;
+			run_philosopher(forks, args, &sp, &mon_dc[i]);
+		}
+		philos[i++] = pid;
 	}
 }
 

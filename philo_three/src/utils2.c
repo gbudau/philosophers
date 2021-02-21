@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 19:10:36 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/16 19:11:11 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 00:24:50 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,13 @@ char		*create_sem_name(const char *str, unsigned id)
 	ft_utoa(id, philo_id);
 	ft_strcpy(sem_name + i, philo_id);
 	return (sem_name);
+}
+
+void		clean_all_philos(pid_t *philos, unsigned count)
+{
+	unsigned	i;
+
+	i = 0;
+	while (i < count)
+		kill(philos[i++], SIGKILL);
 }
