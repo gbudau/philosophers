@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 17:57:20 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 20:59:28 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ static void	pickup_forks(t_philo *ph)
 	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is thinking");
 	sem_post(ph->print_status);
-	usleep(1000);
 	sem_wait(ph->forks);
 	sem_wait(ph->print_status);
 	gettimeofday(&curr, NULL);

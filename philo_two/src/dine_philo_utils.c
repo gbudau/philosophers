@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 21:43:16 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 17:57:59 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 21:32:24 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,4 +53,5 @@ void	philo_sleep(t_philo *ph)
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is sleeping");
 	sem_post(ph->print_status);
 	usleep(ph->args->time_to_sleep * 1000);
+	usleep(1000);
 }
