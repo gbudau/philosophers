@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 17:50:47 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 23:41:54 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,6 @@ static void	pickup_forks(t_philo *ph)
 	struct timeval	*start;
 
 	start = &ph->args->start_time;
-	sem_wait(ph->print_status);
-	gettimeofday(&curr, NULL);
-	ft_print_status(get_time_diff(start, &curr), ph->id, "is thinking");
-	sem_post(ph->print_status);
-	usleep(1000);
 	sem_wait(ph->forks);
 	sem_wait(ph->print_status);
 	gettimeofday(&curr, NULL);
@@ -53,38 +48,34 @@ static void	drop_forks(t_philo *ph)
 	sem_post(ph->print_status);
 }
 
+static void	philo_think(t_philo *ph)
+{
+	struct timeval	curr;
+	struct timeval	*start;
+
+	start = &ph->args->start_time;
+	sem_wait(ph->print_status);
+	gettimeofday(&curr, NULL);
+	ft_print_status(get_time_diff(start, &curr), ph->id, "is thinking");
+	sem_post(ph->print_status);
+}
+
 void		*dine_philo(void *vars)
 {
 	t_philo			*ph;
 
 	ph = vars;
+	philo_think(ph);
 	while (TRUE)
 	{
 		pickup_forks(ph);
 		eat_spaghetti(ph);
 		drop_forks(ph);
 		philo_sleep(ph);
+		philo_think(ph);
+		usleep(1000);
 	}
 	return (NULL);
-}
-
-static int	allocate_memory(pid_t **philos, t_args *args,
-									t_super_monitor_dining_complete *super_mon,
-											t_monitor_dining_complete **mon_dc)
-{
-	*philos = malloc(sizeof(pid_t) * args->n_philos);
-	if (philos == NULL)
-		return (-1);
-	super_mon->is_dining_complete = malloc(sizeof(unsigned) * args->n_philos);
-	if (super_mon->is_dining_complete == NULL)
-		return (-1);
-	super_mon->lock_dining_complete = malloc(sizeof(sem_t *) * args->n_philos);
-	if (super_mon->lock_dining_complete == NULL)
-		return (-1);
-	*mon_dc = malloc(sizeof(t_monitor_dining_complete) * args->n_philos);
-	if (mon_dc == NULL)
-		return (-1);
-	return (0);
 }
 
 int			main(int argc, char **argv)

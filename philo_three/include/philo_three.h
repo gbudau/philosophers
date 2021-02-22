@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 01:14:11 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 23:40:05 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,5 +122,8 @@ void			create_and_detach_monitor_threads(t_args *args,
 									t_super_monitor_dining_complete *super_mon,
 											t_monitor_dining_complete *mon_dc);
 void			clean_all_philos(pid_t	*philos, unsigned count);
+int				allocate_memory(pid_t **philos, t_args *args,
+									t_super_monitor_dining_complete *super_mon,
+										t_monitor_dining_complete **mon_dc);
 
 #endif
