@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 21:02:09 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 22:16:05 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/23 00:47:32 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,27 @@ int			is_dining_complete(t_philo *ph, t_args *args)
 		i++;
 	}
 	return (TRUE);
+}
+
+void		*monitor_philos(void *vars)
+{
+	t_args			*args;
+	t_philo			*ph;
+	t_monitor		*mon;
+	unsigned		*id;
+
+	mon = vars;
+	ph = mon->ph;
+	args = mon->args;
+	while (TRUE)
+	{
+		id = check_starvation(ph, args);
+		if (id)
+			return ((void *)id);
+		if (args->limit_times_to_eat)
+			if (is_dining_complete(ph, args))
+				return (NULL);
+		usleep(5000);
+	}
+	return (NULL);
 }

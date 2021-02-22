@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 17:47:20 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/23 00:48:47 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,6 @@ static void	pickup_forks(t_philo *ph)
 	struct timeval	*start;
 
 	start = &ph->args->start_time;
-	pthread_mutex_lock(ph->print_status);
-	gettimeofday(&curr, NULL);
-	ft_print_status(get_time_diff(start, &curr), ph->id, "is thinking");
-	pthread_mutex_unlock(ph->print_status);
-	usleep(1000);
 	pthread_mutex_lock(ph->first_fork);
 	pthread_mutex_lock(ph->print_status);
 	gettimeofday(&curr, NULL);
@@ -53,40 +48,32 @@ static void	drop_forks(t_philo *ph)
 	pthread_mutex_unlock(ph->print_status);
 }
 
+static void	philo_think(t_philo *ph)
+{
+	struct timeval	curr;
+	struct timeval	*start;
+
+	start = &ph->args->start_time;
+	pthread_mutex_lock(ph->print_status);
+	gettimeofday(&curr, NULL);
+	ft_print_status(get_time_diff(start, &curr), ph->id, "is thinking");
+	pthread_mutex_unlock(ph->print_status);
+}
+
 void		*dine_philo(void *vars)
 {
 	t_philo			*ph;
 
 	ph = vars;
+	philo_think(ph);
 	while (TRUE)
 	{
 		pickup_forks(ph);
 		eat_spaghetti(ph);
 		drop_forks(ph);
 		philo_sleep(ph);
-	}
-	return (NULL);
-}
-
-void		*monitor_philos(void *vars)
-{
-	t_args			*args;
-	t_philo			*ph;
-	t_monitor		*mon;
-	unsigned		*id;
-
-	mon = vars;
-	ph = mon->ph;
-	args = mon->args;
-	while (TRUE)
-	{
-		id = check_starvation(ph, args);
-		if (id)
-			return ((void *)id);
-		if (args->limit_times_to_eat)
-			if (is_dining_complete(ph, args))
-				return (NULL);
-		usleep(5000);
+		philo_think(ph);
+		usleep(1000);
 	}
 	return (NULL);
 }
