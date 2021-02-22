@@ -15,12 +15,6 @@ jobs:
     steps:
     - name: checkout
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: get changed files
-      id: getfile
-      run: |
-        echo "::set-output name=files::$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }}| xargs | egrep '\.c$|\.h$')"
     - uses: alexandregv/norminette-action@v2
       with:
-        flags: ${{ steps.getfile.outputs.files }}
+        flags: '.'
