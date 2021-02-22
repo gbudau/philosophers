@@ -1,6 +1,6 @@
 NAME = philo_two
 CC = gcc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -O3
 LFLAGS = -lpthread
 RMF = rm -rf
 
