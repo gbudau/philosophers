@@ -6,33 +6,11 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 00:49:46 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 01:13:37 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo_three.h"
-
-void		open_semaphores(sem_t **forks, t_args *args,
-											t_monitor_dining_complete *mon_dc)
-{
-	int			oflag;
-	mode_t		mode;
-	unsigned	i;
-	char		*sem_name;
-
-	oflag = O_CREAT | O_EXCL;
-	mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-	*forks = sem_open("/forks", oflag, mode, args->n_philos);
-	sem_unlink("/forks");
-	i = 0;
-	while (i < args->n_philos)
-	{
-		sem_name = create_sem_name("/dining_complete", i + 1);
-		mon_dc[i].dining_complete = sem_open(sem_name, oflag, mode, 0);
-		sem_unlink(sem_name);
-		i++;
-	}
-}
 
 static void	open_philosopher_sem(t_philo *ph, t_monitor *mon,
 															t_status_philo *sp)
@@ -57,6 +35,42 @@ static void	open_philosopher_sem(t_philo *ph, t_monitor *mon,
 	mon->check_has_forks = sem_open(sem_name, oflag, mode, 1);
 	sem_unlink(sem_name);
 	ph->check_has_forks = mon->check_has_forks;
+}
+
+static void	philo_died_exit(t_philo *ph, t_args *args)
+{
+	struct timeval	curr;
+
+	sem_wait(ph->print_status);
+	gettimeofday(&curr, NULL);
+	ft_print_status(get_time_diff(&args->start_time, &curr), ph->id, "died");
+	exit(1);
+}
+
+static void	*monitor_self(void *vars)
+{
+	t_args			*args;
+	t_philo			*ph;
+	t_monitor		*mon;
+	int				dining_complete;
+
+	mon = vars;
+	ph = mon->ph;
+	args = mon->args;
+	dining_complete = FALSE;
+	while (TRUE)
+	{
+		if (is_starving(ph, args))
+			philo_died_exit(ph, args);
+		if (!dining_complete && args->limit_times_to_eat &&
+														is_dining_complete(ph))
+		{
+			dining_complete = TRUE;
+			sem_post(ph->dining_complete);
+		}
+		usleep(5000);
+	}
+	return (NULL);
 }
 
 static void	run_philosopher(sem_t *forks, t_args *args, t_status_philo *sp,
@@ -106,32 +120,5 @@ void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 			run_philosopher(forks, args, &sp, &mon_dc[i]);
 		}
 		philos[i++] = pid;
-	}
-}
-
-void		wait_all_philos(pid_t *philos, t_args *args)
-{
-	pid_t		pid;
-	unsigned	i;
-	int			wstatus;
-
-	if ((pid = waitpid(-1, &wstatus, 0)) > 0)
-	{
-		if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus))
-		{
-			i = 0;
-			while (i < args->n_philos)
-			{
-				if (pid != philos[i])
-					kill(philos[i], SIGKILL);
-				i++;
-			}
-			exit(1);
-		}
-		else
-		{
-			while (waitpid(-1, NULL, 0) > 0)
-				;
-		}
 	}
 }

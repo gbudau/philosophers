@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 19:10:36 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 00:24:50 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 01:13:50 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,53 @@ void		clean_all_philos(pid_t *philos, unsigned count)
 	i = 0;
 	while (i < count)
 		kill(philos[i++], SIGKILL);
+}
+
+void		wait_all_philos(pid_t *philos, t_args *args)
+{
+	pid_t		pid;
+	unsigned	i;
+	int			wstatus;
+
+	if ((pid = waitpid(-1, &wstatus, 0)) > 0)
+	{
+		if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus))
+		{
+			i = 0;
+			while (i < args->n_philos)
+			{
+				if (pid != philos[i])
+					kill(philos[i], SIGKILL);
+				i++;
+			}
+			exit(1);
+		}
+		else
+		{
+			while (waitpid(-1, NULL, 0) > 0)
+				;
+		}
+	}
+}
+
+void		open_semaphores(sem_t **forks, t_args *args,
+											t_monitor_dining_complete *mon_dc)
+{
+	int			oflag;
+	mode_t		mode;
+	unsigned	i;
+	char		*sem_name;
+
+	oflag = O_CREAT | O_EXCL;
+	mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+	*forks = sem_open("/forks", oflag, mode, args->n_philos);
+	sem_unlink("/forks");
+	i = 0;
+	while (i < args->n_philos)
+	{
+		sem_name = create_sem_name("/dining_complete", i + 1);
+		mon_dc[i].dining_complete = sem_open(sem_name, oflag, mode, 0);
+		sem_unlink(sem_name);
+		i++;
+	}
 }

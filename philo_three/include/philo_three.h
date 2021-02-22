@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 00:49:06 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 01:14:11 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,6 @@ void			open_semaphores(sem_t **forks, t_args *args,
 void			create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 											t_monitor_dining_complete *mon_dc);
 void			*dine_philo(void *vars);
-void			*monitor_self(void *vars);
 int				is_starving(t_philo *ph, t_args *args);
 int				is_dining_complete(t_philo *ph);
 void			increment_eat_count(t_philo *ph);

@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 00:20:54 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 01:09:09 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,115 +67,7 @@ void		*dine_philo(void *vars)
 	return (NULL);
 }
 
-void		philo_died_exit(t_philo *ph, t_args *args)
-{
-	struct timeval	curr;
-
-	sem_wait(ph->print_status);
-	gettimeofday(&curr, NULL);
-	ft_print_status(get_time_diff(&args->start_time, &curr), ph->id, "died");
-	exit(1);
-}
-
-void		*monitor_self(void *vars)
-{
-	t_args			*args;
-	t_philo			*ph;
-	t_monitor		*mon;
-	int				dining_complete;
-
-	mon = vars;
-	ph = mon->ph;
-	args = mon->args;
-	dining_complete = FALSE;
-	while (TRUE)
-	{
-		if (is_starving(ph, args))
-			philo_died_exit(ph, args);
-		if (!dining_complete && args->limit_times_to_eat &&
-														is_dining_complete(ph))
-		{
-			dining_complete = TRUE;
-			sem_post(ph->dining_complete);
-		}
-		usleep(5000);
-	}
-	return (NULL);
-}
-
-void		*set_dining_complete(void *vars)
-{
-	t_monitor_dining_complete	*mon;
-
-	mon = vars;
-	sem_wait(mon->dining_complete);
-	sem_wait(mon->lock_dining_complete);
-	*mon->is_dining_complete = TRUE;
-	sem_post(mon->lock_dining_complete);
-	return (NULL);
-}
-
-void		*exit_dining_complete(void *vars)
-{
-	t_super_monitor_dining_complete	*super_mon;
-	unsigned						i;
-
-	super_mon = vars;
-	while (TRUE)
-	{
-		i = 0;
-		while (i < super_mon->args->n_philos)
-		{
-			sem_wait(super_mon->lock_dining_complete[i]);
-			if (super_mon->is_dining_complete[i] == FALSE)
-			{
-				sem_post(super_mon->lock_dining_complete[i]);
-				break ;
-			}
-			sem_post(super_mon->lock_dining_complete[i]);
-			i++;
-		}
-		if (i == super_mon->args->n_philos)
-		{
-			clean_all_philos(super_mon->philos, i);
-			exit(0);
-		}
-		usleep(150000);
-	}
-}
-
-void		create_and_detach_monitor_threads(t_args *args,
-									t_super_monitor_dining_complete *super_mon,
-											t_monitor_dining_complete *mon_dc)
-{
-	unsigned						i;
-	char							*sem_name;
-	pthread_t						thread_id;
-
-	i = 0;
-	while (i < args->n_philos)
-	{
-		sem_name = create_sem_name("/lock_dining_complete", i);
-		super_mon->lock_dining_complete[i++] = sem_open(sem_name,
-															O_CREAT | O_EXCL,
-									S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH, 1);
-		sem_unlink(sem_name);
-	}
-	i = 0;
-	while (i < args->n_philos)
-	{
-		mon_dc[i].args = args;
-		mon_dc[i].is_dining_complete = &super_mon->is_dining_complete[i];
-		mon_dc[i].lock_dining_complete = super_mon->lock_dining_complete[i];
-		pthread_create(&thread_id, NULL, &set_dining_complete, &mon_dc[i]);
-		pthread_detach(thread_id);
-		i++;
-	}
-	pthread_create(&thread_id, NULL, &exit_dining_complete, super_mon);
-	pthread_detach(thread_id);
-}
-
-int			allocate_memory(pid_t **philos, t_args *args,
+static int	allocate_memory(pid_t **philos, t_args *args,
 									t_super_monitor_dining_complete *super_mon,
 											t_monitor_dining_complete **mon_dc)
 {
