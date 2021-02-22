@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 01:13:37 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 23:55:39 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,13 +102,13 @@ void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 	sem_t			*print_status;
 
 	gettimeofday(&args->start_time, NULL);
-	print_status = sem_open("/print_status", SEM_OPEN_FLAG, SEM_MODE_FLAG, 1);
-	sem_unlink("/print_status");
+	print_status = sem_open_unlink("/print_status", 1);
 	i = 0;
 	while (i < args->n_philos)
 	{
-		pid = fork();
-		if (pid == -1)
+		if (i == args->n_philos / 2)
+			usleep(1000);
+		if ((pid = fork()) == -1)
 		{
 			clean_all_philos(philos, i);
 			exit(1);
