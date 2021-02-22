@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/16 19:23:14 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 17:47:20 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,19 @@ static void	pickup_forks(t_philo *ph)
 	struct timeval	*start;
 
 	start = &ph->args->start_time;
-	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
+	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is thinking");
 	pthread_mutex_unlock(ph->print_status);
 	usleep(1000);
 	pthread_mutex_lock(ph->first_fork);
-	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
+	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "has taken a fork");
 	pthread_mutex_unlock(ph->print_status);
 	pthread_mutex_lock(ph->second_fork);
-	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
+	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "has taken a fork");
 	pthread_mutex_unlock(ph->print_status);
 }
@@ -42,12 +42,13 @@ static void	drop_forks(t_philo *ph)
 
 	start = &ph->args->start_time;
 	pthread_mutex_unlock(ph->second_fork);
-	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
+	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "has dropped a fork");
 	pthread_mutex_unlock(ph->print_status);
 	pthread_mutex_unlock(ph->first_fork);
 	pthread_mutex_lock(ph->print_status);
+	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "has dropped a fork");
 	pthread_mutex_unlock(ph->print_status);
 }

@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 21:43:16 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 21:58:32 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/22 17:48:07 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	eat_spaghetti(t_philo *ph)
 		increment_eat_count(ph);
 	pthread_mutex_unlock(ph->check_starvation);
 	pthread_mutex_lock(ph->print_status);
+	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is eating");
 	pthread_mutex_unlock(ph->print_status);
 	usleep(ph->args->time_to_eat * 1000);
@@ -47,8 +48,8 @@ void	philo_sleep(t_philo *ph)
 	struct timeval	*start;
 
 	start = &ph->args->start_time;
-	gettimeofday(&curr, NULL);
 	pthread_mutex_lock(ph->print_status);
+	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is sleeping");
 	pthread_mutex_unlock(ph->print_status);
 	usleep(ph->args->time_to_sleep * 1000);
