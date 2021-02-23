@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 23:55:39 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/23 19:48:42 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ static void	*monitor_self(void *vars)
 }
 
 static void	run_philosopher(sem_t *forks, t_args *args, t_status_philo *sp,
-											t_monitor_dining_complete *mon_dc)
+											sem_t *dining_complete)
 {
 	t_philo		ph;
 	t_monitor	mon;
@@ -85,7 +85,7 @@ static void	run_philosopher(sem_t *forks, t_args *args, t_status_philo *sp,
 	ph.forks = forks;
 	ph.last_eat_time = args->start_time;
 	open_philosopher_sem(&ph, &mon, sp);
-	ph.dining_complete = mon_dc->dining_complete;
+	ph.dining_complete = dining_complete;
 	mon.ph = &ph;
 	mon.args = args;
 	pthread_create(&mon.thread, NULL, &monitor_self, &mon);
@@ -117,7 +117,7 @@ void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 		{
 			sp.id = i + 1;
 			sp.print_status = print_status;
-			run_philosopher(forks, args, &sp, &mon_dc[i]);
+			run_philosopher(forks, args, &sp, mon_dc->dining_complete[i]);
 		}
 		philos[i++] = pid;
 	}

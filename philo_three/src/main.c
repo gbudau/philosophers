@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 23:41:54 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/23 20:03:14 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,20 +83,18 @@ int			main(int argc, char **argv)
 	t_args							args;
 	sem_t							*forks;
 	pid_t							*philos;
-	t_super_monitor_dining_complete	super_mon;
-	t_monitor_dining_complete		*mon_dc;
+	t_monitor_dining_complete		mon_dc;
 
 	memset(&args, 0, sizeof(args));
-	memset(&super_mon, 0, sizeof(super_mon));
 	if (check_args(argc, argv, &args) == -1)
 		return (1);
-	if (allocate_memory(&philos, &args, &super_mon, &mon_dc) == -1)
+	if (allocate_memory(&philos, &args, &mon_dc) == -1)
 		return (1);
-	open_semaphores(&forks, &args, mon_dc);
-	create_philo_proc(forks, &args, philos, mon_dc);
-	super_mon.args = &args;
-	super_mon.philos = philos;
-	create_and_detach_monitor_threads(&args, &super_mon, mon_dc);
+	open_semaphores(&forks, &args, &mon_dc);
+	create_philo_proc(forks, &args, philos, &mon_dc);
+	mon_dc.args = &args;
+	mon_dc.philos = philos;
+	create_and_detach_monitor_thread(&mon_dc);
 	wait_all_philos(philos, &args);
 	return (0);
 }

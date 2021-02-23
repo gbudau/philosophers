@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 19:10:36 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 01:13:50 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/23 19:46:31 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void		open_semaphores(sem_t **forks, t_args *args,
 	while (i < args->n_philos)
 	{
 		sem_name = create_sem_name("/dining_complete", i + 1);
-		mon_dc[i].dining_complete = sem_open(sem_name, oflag, mode, 0);
+		mon_dc->dining_complete[i] = sem_open(sem_name, oflag, mode, 0);
 		sem_unlink(sem_name);
 		i++;
 	}

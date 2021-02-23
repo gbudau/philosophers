@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 23:55:55 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/23 20:02:54 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ typedef struct	s_philo
 	struct timeval	last_eat_time;
 	unsigned		eat_count;
 	unsigned		is_dining_complete;
-	unsigned		n_forks_picked_up;
 	sem_t			*forks;
 	sem_t			*print_status;
 	sem_t			*check_starvation;
@@ -78,19 +77,10 @@ typedef struct	s_monitor
 
 typedef struct	s_monitor_dining_complete
 {
-	t_args		*args;
-	unsigned	*is_dining_complete;
-	sem_t		*dining_complete;
-	sem_t		*lock_dining_complete;
-}				t_monitor_dining_complete;
-
-typedef struct	s_super_monitor_dining_complete
-{
-	t_args		*args;
 	pid_t		*philos;
-	unsigned	*is_dining_complete;
-	sem_t		**lock_dining_complete;
-}				t_super_monitor_dining_complete;
+	t_args		*args;
+	sem_t		**dining_complete;
+}				t_monitor_dining_complete;
 
 typedef struct	s_status_philo
 {
@@ -118,13 +108,11 @@ void			eat_spaghetti(t_philo *ph);
 void			philo_sleep(t_philo *ph);
 char			*create_sem_name(const char *str, unsigned id);
 void			wait_all_philos(pid_t *philos, t_args *args);
-void			create_and_detach_monitor_threads(t_args *args,
-									t_super_monitor_dining_complete *super_mon,
+void			create_and_detach_monitor_thread(
 											t_monitor_dining_complete *mon_dc);
 void			clean_all_philos(pid_t	*philos, unsigned count);
 int				allocate_memory(pid_t **philos, t_args *args,
-									t_super_monitor_dining_complete *super_mon,
-										t_monitor_dining_complete **mon_dc);
+										t_monitor_dining_complete *mon_dc);
 sem_t			*sem_open_unlink(const char *name, int value);
 
 #endif
