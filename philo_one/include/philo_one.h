@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/15 22:17:10 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:11:51 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,5 +83,6 @@ int				is_dining_complete(t_philo *ph, t_args *args);
 void			increment_eat_count(t_philo *ph);
 void			eat_spaghetti(t_philo *ph);
 void			philo_sleep(t_philo *ph);
+void			ft_usleep(unsigned ms);
 
 #endif

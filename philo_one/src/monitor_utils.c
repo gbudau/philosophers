@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 21:02:09 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/23 00:47:32 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:13:40 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void		*monitor_philos(void *vars)
 		if (args->limit_times_to_eat)
 			if (is_dining_complete(ph, args))
 				return (NULL);
-		usleep(5000);
+		ft_usleep(5);
 	}
 	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/23 00:48:47 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:13:25 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void		*dine_philo(void *vars)
 		drop_forks(ph);
 		philo_sleep(ph);
 		philo_think(ph);
-		usleep(1000);
+		ft_usleep(1);
 	}
 	return (NULL);
 }

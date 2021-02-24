@@ -9,7 +9,7 @@ SRC_DIR = src
 OBJ_DIR = obj
 
 _OBJ = main.o atou_error.o print_output.o ft_utoa.o check_args.o \
-	   utils.o monitor_utils.o dine_philo_utils.o
+	   utils.o monitor_utils.o dine_philo_utils.o ft_usleep.o
 OBJ := $(patsubst %, $(OBJ_DIR)/%, $(_OBJ))
 
 _DEPS = philo_one.h
