@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/24 18:20:08 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 23:21:03 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,9 @@ int			main(int argc, char **argv)
 	unlink_semaphores(&args);
 	create_and_detach_philo_threads(ph, forks, &mon, &args);
 	create_and_join_monitor_thread(&mon, ph, &args);
+	free(ph);
+	free(mon.check_starvation);
+	if (args.limit_times_to_eat)
+		free(mon.check_dining_complete);
 	return (0);
 }
