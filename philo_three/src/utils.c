@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/23 19:48:42 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 15:56:50 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,19 +62,20 @@ static void	*monitor_self(void *vars)
 	{
 		if (is_starving(ph, args))
 			philo_died_exit(ph, args);
-		if (!dining_complete && args->limit_times_to_eat &&
-														is_dining_complete(ph))
+		if (args->limit_times_to_eat && !dining_complete)
 		{
-			dining_complete = TRUE;
-			sem_post(ph->dining_complete);
+			if (is_dining_complete(ph))
+			{
+				dining_complete = TRUE;
+				sem_post(ph->dining_complete);
+			}
 		}
 		usleep(5000);
 	}
 	return (NULL);
 }
 
-static void	run_philosopher(sem_t *forks, t_args *args, t_status_philo *sp,
-											sem_t *dining_complete)
+static void	run_philosopher(sem_t *forks, t_args *args, t_status_philo *sp)
 {
 	t_philo		ph;
 	t_monitor	mon;
@@ -85,7 +86,7 @@ static void	run_philosopher(sem_t *forks, t_args *args, t_status_philo *sp,
 	ph.forks = forks;
 	ph.last_eat_time = args->start_time;
 	open_philosopher_sem(&ph, &mon, sp);
-	ph.dining_complete = dining_complete;
+	ph.dining_complete = sp->dining_complete;
 	mon.ph = &ph;
 	mon.args = args;
 	pthread_create(&mon.thread, NULL, &monitor_self, &mon);
@@ -109,15 +110,15 @@ void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 		if (i == args->n_philos / 2)
 			usleep(1000);
 		if ((pid = fork()) == -1)
-		{
-			clean_all_philos(philos, i);
-			exit(1);
-		}
+			exit(clean_all_philos(philos, i, 1));
 		if (pid == 0)
 		{
+			sp.dining_complete = NULL;
 			sp.id = i + 1;
 			sp.print_status = print_status;
-			run_philosopher(forks, args, &sp, mon_dc->dining_complete[i]);
+			if (args->limit_times_to_eat)
+				sp.dining_complete = mon_dc->dining_complete[i];
+			run_philosopher(forks, args, &sp);
 		}
 		philos[i++] = pid;
 	}

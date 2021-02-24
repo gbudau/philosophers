@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/22 01:08:09 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/23 20:02:28 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 15:58:32 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ static void	*set_dining_complete(void *vars)
 		sem_wait(mon->dining_complete[i]);
 		i++;
 	}
-	clean_all_philos(mon->philos, args->n_philos);
-	exit(0);
+	exit(clean_all_philos(mon->philos, args->n_philos, 0));
 	return (NULL);
 }
 

@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/22 23:38:55 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/23 19:40:35 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 14:23:40 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,12 @@ int		allocate_memory(pid_t **philos, t_args *args,
 	*philos = malloc(sizeof(pid_t) * args->n_philos);
 	if (philos == NULL)
 		return (-1);
-	mon_dc->dining_complete = malloc(sizeof(sem_t *) * args->n_philos);
-	if (mon_dc->dining_complete == NULL)
-		return (-1);
+	if (args->limit_times_to_eat)
+	{
+		mon_dc->dining_complete = malloc(sizeof(sem_t *) * args->n_philos);
+		if (mon_dc->dining_complete == NULL)
+			return (-1);
+	}
 	return (0);
 }
 

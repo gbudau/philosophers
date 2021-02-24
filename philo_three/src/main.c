@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/23 20:03:14 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 14:24:52 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,15 +86,19 @@ int			main(int argc, char **argv)
 	t_monitor_dining_complete		mon_dc;
 
 	memset(&args, 0, sizeof(args));
+	memset(&mon_dc, 0, sizeof(mon_dc));
 	if (check_args(argc, argv, &args) == -1)
 		return (1);
 	if (allocate_memory(&philos, &args, &mon_dc) == -1)
 		return (1);
 	open_semaphores(&forks, &args, &mon_dc);
 	create_philo_proc(forks, &args, philos, &mon_dc);
-	mon_dc.args = &args;
-	mon_dc.philos = philos;
-	create_and_detach_monitor_thread(&mon_dc);
+	if (args.limit_times_to_eat)
+	{
+		mon_dc.args = &args;
+		mon_dc.philos = philos;
+		create_and_detach_monitor_thread(&mon_dc);
+	}
 	wait_all_philos(philos, &args);
 	return (0);
 }

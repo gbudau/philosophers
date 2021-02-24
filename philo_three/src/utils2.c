@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/16 19:10:36 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/23 19:46:31 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 15:57:37 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,14 @@ char		*create_sem_name(const char *str, unsigned id)
 	return (sem_name);
 }
 
-void		clean_all_philos(pid_t *philos, unsigned count)
+int			clean_all_philos(pid_t *philos, unsigned count, int ret)
 {
 	unsigned	i;
 
 	i = 0;
 	while (i < count)
 		kill(philos[i++], SIGKILL);
+	return (ret);
 }
 
 void		wait_all_philos(pid_t *philos, t_args *args)
@@ -81,12 +82,15 @@ void		open_semaphores(sem_t **forks, t_args *args,
 	mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
 	*forks = sem_open("/forks", oflag, mode, args->n_philos);
 	sem_unlink("/forks");
-	i = 0;
-	while (i < args->n_philos)
+	if (args->limit_times_to_eat)
 	{
-		sem_name = create_sem_name("/dining_complete", i + 1);
-		mon_dc->dining_complete[i] = sem_open(sem_name, oflag, mode, 0);
-		sem_unlink(sem_name);
-		i++;
+		i = 0;
+		while (i < args->n_philos)
+		{
+			sem_name = create_sem_name("/dining_complete", i + 1);
+			mon_dc->dining_complete[i] = sem_open(sem_name, oflag, mode, 0);
+			sem_unlink(sem_name);
+			i++;
+		}
 	}
 }
