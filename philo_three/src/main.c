@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:15 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/24 18:28:46 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 23:45:14 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,5 +100,8 @@ int			main(int argc, char **argv)
 		create_and_detach_monitor_thread(&mon_dc);
 	}
 	wait_all_philos(philos, &args);
+	free(philos);
+	if (args.limit_times_to_eat)
+		free(mon_dc.dining_complete);
 	return (0);
 }
