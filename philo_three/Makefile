@@ -10,7 +10,7 @@ OBJ_DIR = obj
 
 _OBJ = main.o atou_error.o print_output.o ft_utoa.o check_args.o \
 	   monitor_utils.o dine_philo_utils.o utils.o utils2.o utils3.o \
-	   monitor_dining_complete.o ft_usleep.o
+	   monitor_dining_complete.o ft_sleep_ms.o
 OBJ := $(patsubst %, $(OBJ_DIR)/%, $(_OBJ))
 
 _DEPS = philo_three.h

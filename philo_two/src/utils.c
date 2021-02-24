@@ -69,7 +69,7 @@ void		create_and_detach_philo_threads(t_philo *ph, sem_t *forks,
 	while (i < args->n_philos)
 	{
 		if (i == args->n_philos / 2)
-			ft_usleep(1);
+			ft_sleep_ms(1);
 		ph[i].id = i + 1;
 		ph[i].args = args;
 		ph[i].forks = forks;

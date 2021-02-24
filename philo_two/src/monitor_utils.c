@@ -69,7 +69,7 @@ void		*monitor_philos(void *vars)
 		if (args->limit_times_to_eat)
 			if (is_dining_complete(ph, args))
 				return (NULL);
-		ft_usleep(5);
+		ft_sleep_ms(5);
 	}
 	return (NULL);
 }

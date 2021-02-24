@@ -70,7 +70,7 @@ static void	*monitor_self(void *vars)
 				sem_post(ph->dining_complete);
 			}
 		}
-		ft_usleep(5);
+		ft_sleep_ms(5);
 	}
 	return (NULL);
 }
@@ -108,7 +108,7 @@ void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 	while (i < args->n_philos)
 	{
 		if (i == args->n_philos / 2)
-			ft_usleep(1);
+			ft_sleep_ms(1);
 		if ((pid = fork()) == -1)
 			exit(clean_all_philos(philos, i, 1));
 		if (pid == 0)

@@ -115,6 +115,6 @@ int				clean_all_philos(pid_t	*philos, unsigned count, int ret);
 int				allocate_memory(pid_t **philos, t_args *args,
 										t_monitor_dining_complete *mon_dc);
 sem_t			*sem_open_unlink(const char *name, int value);
-void			ft_usleep(unsigned ms);
+void			ft_sleep_ms(unsigned ms);
 
 #endif

@@ -83,6 +83,6 @@ int				is_dining_complete(t_philo *ph, t_args *args);
 void			increment_eat_count(t_philo *ph);
 void			eat_spaghetti(t_philo *ph);
 void			philo_sleep(t_philo *ph);
-void			ft_usleep(unsigned ms);
+void			ft_sleep_ms(unsigned ms);
 
 #endif

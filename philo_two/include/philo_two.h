@@ -87,6 +87,6 @@ void			eat_spaghetti(t_philo *ph);
 void			philo_sleep(t_philo *ph);
 void			unlink_semaphores(t_args *args);
 char			*create_sem_name(const char *str, unsigned id);
-void			ft_usleep(unsigned ms);
+void			ft_sleep_ms(unsigned ms);
 
 #endif

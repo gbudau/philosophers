@@ -73,7 +73,7 @@ void		*dine_philo(void *vars)
 		drop_forks(ph);
 		philo_sleep(ph);
 		philo_think(ph);
-		ft_usleep(1);
+		ft_sleep_ms(1);
 	}
 	return (NULL);
 }

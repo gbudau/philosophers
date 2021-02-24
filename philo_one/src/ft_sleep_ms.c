@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_usleep.c                                        :+:      :+:    :+:   */
+/*   ft_sleep_ms.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/24 17:56:18 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/24 18:27:30 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 19:00:34 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo_three.h"
+#include "../include/philo_one.h"
 
 static unsigned	current_time(void)
 {
@@ -23,7 +23,7 @@ static unsigned	current_time(void)
 	return (ms);
 }
 
-void			ft_usleep(unsigned ms)
+void			ft_sleep_ms(unsigned ms)
 {
 	unsigned	start;
 

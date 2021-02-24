@@ -37,7 +37,7 @@ void	eat_spaghetti(t_philo *ph)
 	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is eating");
 	pthread_mutex_unlock(ph->print_status);
-	ft_usleep(ph->args->time_to_eat);
+	ft_sleep_ms(ph->args->time_to_eat);
 	if (ph->args->limit_times_to_eat)
 		increment_eat_count(ph);
 }
@@ -52,5 +52,5 @@ void	philo_sleep(t_philo *ph)
 	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is sleeping");
 	pthread_mutex_unlock(ph->print_status);
-	ft_usleep(ph->args->time_to_sleep);
+	ft_sleep_ms(ph->args->time_to_sleep);
 }
