@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/16 20:55:22 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/24 15:57:19 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:28:04 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,5 +115,6 @@ int				clean_all_philos(pid_t	*philos, unsigned count, int ret);
 int				allocate_memory(pid_t **philos, t_args *args,
 										t_monitor_dining_complete *mon_dc);
 sem_t			*sem_open_unlink(const char *name, int value);
+void			ft_usleep(unsigned ms);
 
 #endif

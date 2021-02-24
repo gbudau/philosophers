@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/24 15:56:50 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:29:16 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ static void	*monitor_self(void *vars)
 				sem_post(ph->dining_complete);
 			}
 		}
-		usleep(5000);
+		ft_usleep(5);
 	}
 	return (NULL);
 }
@@ -108,7 +108,7 @@ void		create_philo_proc(sem_t *forks, t_args *args, pid_t *philos,
 	while (i < args->n_philos)
 	{
 		if (i == args->n_philos / 2)
-			usleep(1000);
+			ft_usleep(1);
 		if ((pid = fork()) == -1)
 			exit(clean_all_philos(philos, i, 1));
 		if (pid == 0)
