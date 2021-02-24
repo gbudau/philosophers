@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 17:04:46 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/22 23:06:37 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:21:16 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void		create_and_detach_philo_threads(t_philo *ph, sem_t *forks,
 	while (i < args->n_philos)
 	{
 		if (i == args->n_philos / 2)
-			usleep(1000);
+			ft_usleep(1);
 		ph[i].id = i + 1;
 		ph[i].args = args;
 		ph[i].forks = forks;

@@ -6,7 +6,7 @@
 /*   By: gbudau <gbudau@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/02/15 21:43:16 by gbudau            #+#    #+#             */
-/*   Updated: 2021/02/23 19:26:04 by gbudau           ###   ########.fr       */
+/*   Updated: 2021/02/24 18:19:49 by gbudau           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	eat_spaghetti(t_philo *ph)
 	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is eating");
 	sem_post(ph->print_status);
-	usleep(ph->args->time_to_eat * 1000);
+	ft_usleep(ph->args->time_to_eat);
 	if (ph->args->limit_times_to_eat)
 		increment_eat_count(ph);
 }
@@ -52,5 +52,5 @@ void	philo_sleep(t_philo *ph)
 	gettimeofday(&curr, NULL);
 	ft_print_status(get_time_diff(start, &curr), ph->id, "is sleeping");
 	sem_post(ph->print_status);
-	usleep(ph->args->time_to_sleep * 1000);
+	ft_usleep(ph->args->time_to_sleep);
 }
